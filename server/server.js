@@ -11,7 +11,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/inthetow')
 
 const app = express();
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions))
+
+app.use(express.json())
 
 app.use("/api/warehouses", require('./routes/warehouses'))
 

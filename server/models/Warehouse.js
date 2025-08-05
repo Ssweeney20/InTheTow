@@ -7,11 +7,16 @@ const WarehouseSchema = new mongoose.Schema(
             required: true,
 
         },
-        address: String,
+        address: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        phoneNumber: String,
         googlePlaceId: {
             type: String,
-            required: true,
-            unique: true
+            unique: true,
+            sparse: true,
         }
 
     },
