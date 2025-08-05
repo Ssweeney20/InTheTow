@@ -9,6 +9,11 @@ router.post('/', warehouseController.createWarehouse)
 
 router.get('/:id', warehouseController.getWarehouseByID)
 
+router.delete('/:id', warehouseController.deleteWarehouseByID)
+
+router.patch('/:id', warehouseController.updateWarehouseByID)
+
 router.get('/name/:name', warehouseController.getWarehouseByName)
+
 
 module.exports = router

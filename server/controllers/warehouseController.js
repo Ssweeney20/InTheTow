@@ -23,6 +23,19 @@ const getWarehouseByID = async (req,res, next) => {
     }
 }
 
+const updateWarehouseByID = async (req,res, next) => {
+    try{
+        const updated = await Warehouse.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true})
+        if (!updated){
+            return res.status(404).json({error: 'ID Not found'})
+        }
+        res.status(200).json({updated})
+    }
+    catch(err){
+        next(err)
+    }
+}
+
 const getWarehouseByName = async (req,res, next) => {
     try{
         const warehouse = await Warehouse.find({name : new RegExp(req.params.name, 'i')})
@@ -56,9 +69,27 @@ const createWarehouse = async (req,res, next) => {
     }
 }
 
+const deleteWarehouseByID = async (req,res, next) => {
+    try{
+        const deleted = await Warehouse.findByIdAndDelete(req.params.id)
+        if (!deleted){
+            return res.status(404).json({error: 'ID Not found'})
+        }
+        res.status(200).json({message: 'Warehouse deleted succesfully'})
+    }
+    catch(err){
+        next(err)
+    }
+}
+
+
+
+
 module.exports = {
     getAllWarehouses,
     getWarehouseByID,
     getWarehouseByName,
     createWarehouse,
+    deleteWarehouseByID,
+    updateWarehouseByID,
 }
