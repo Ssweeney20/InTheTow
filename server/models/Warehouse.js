@@ -51,7 +51,7 @@ const WarehouseSchema = new mongoose.Schema(
             type: String, 
             index: true 
         },
-        staeSearchKey:{ 
+        stateSearchKey:{ 
             type: String, 
             index: true 
         },

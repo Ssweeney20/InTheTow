@@ -114,7 +114,8 @@ const searchWarehouses = async (req, res, next) => {
                     { nameSearchKey: re },
                     { addressSearchKey: re },
                     { citySearchKey: re },
-                    { zipSearchKey: re }
+                    { zipSearchKey: re },
+                    { stateSearchKey: re }
                 ]
             })
             .limit(25);
