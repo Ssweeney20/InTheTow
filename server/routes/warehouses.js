@@ -3,6 +3,8 @@ const router = express.Router()
 
 const warehouseController = require('../controllers/warehouseController')
 
+router.get('/search', warehouseController.searchWarehouses)
+
 router.get('/', warehouseController.getAllWarehouses)
 
 router.post('/', warehouseController.createWarehouse)

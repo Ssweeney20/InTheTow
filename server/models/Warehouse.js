@@ -1,5 +1,13 @@
 const mongoose = require('mongoose')
 
+function normalize(str = '') {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, '')   
+    .replace(/\s+/g, ' ')          
+    .trim();
+}
+
 const WarehouseSchema = new mongoose.Schema(
     {
         name: {
@@ -7,9 +15,21 @@ const WarehouseSchema = new mongoose.Schema(
             required: true,
 
         },
-        address: {
+        streetAddress: {
             type: String,
             unique: true,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        state: {
+            type: String,
+            required: true,
+        },
+        zipCode: {
+            type: String,
             required: true,
         },
         phoneNumber: String,
@@ -19,12 +39,40 @@ const WarehouseSchema = new mongoose.Schema(
             sparse: true,
         },
         hasLumper: Boolean,
-
+        nameSearchKey: { 
+            type: String, 
+            index: true 
+        },
+        addressSearchKey: { 
+            type: String, 
+            index: true 
+        },
+        citySearchKey:{ 
+            type: String, 
+            index: true 
+        },
+        staeSearchKey:{ 
+            type: String, 
+            index: true 
+        },
+        zipSearchKey:{ 
+            type: String, 
+            index: true 
+        }
     },
     {
         timestamps: true 
     }
 )
+
+WarehouseSchema.pre('save', function(next) {
+  this.nameSearchKey    = normalize(this.name);
+  this.addressSearchKey = normalize(this.streetAddress);
+  this.citySearchKey    = normalize(this.city);
+  this.stateSearchKey    = normalize(this.state);
+  this.zipSearchKey     = normalize(this.zipCode);
+  next();
+});
 
 const Warehouse = mongoose.model("Warehouse", WarehouseSchema)
 
