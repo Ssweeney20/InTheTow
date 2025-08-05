@@ -15,7 +15,9 @@ app.use(cors(corsOptions))
 
 app.use(express.json())
 
-app.use("/api/warehouses", require('./routes/warehouses'))
+app.use('/api/warehouses', require('./routes/warehouses'))
+
+app.use('/api/reviews', require('./routes/reviews'))
 
 app.listen(8080, () => {
     console.log("Server started on port 8080");

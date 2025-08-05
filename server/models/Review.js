@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const ReviewSchema = new mongoose.Schema(
     {
         warehouse: {
-            type: Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'Warehouse'
         },
@@ -13,7 +13,7 @@ const ReviewSchema = new mongoose.Schema(
             max: 5,
             required: true
         },
-        body: {
+        reviewText: {
             type: String,
         },
         pictures: {
@@ -27,7 +27,7 @@ const ReviewSchema = new mongoose.Schema(
 
         hasLumper: Boolean,
 
-        saftey: Boolean,
+        safety: Boolean,
 
         overnightParking: Boolean,
     },
@@ -36,14 +36,14 @@ const ReviewSchema = new mongoose.Schema(
     }
 )
 
-reviewSchema.virtual('loadDuration').get(function () {
+ReviewSchema.virtual('loadDuration').get(function () {
     if (this.startTime && this.endTime) {
         return this.startTime - this.endTime;
     }
     return null;
 });
 
-reviewSchema.virtual('onTime').get(function () {
+ReviewSchema.virtual('onTime').get(function () {
     if (this.startTime && this.appointmentTime) {
         return this.startTime <= this.appointmentTime;
     }
