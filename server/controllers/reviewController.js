@@ -1,4 +1,5 @@
 const Review = require('../models/Review')
+const Warehouse = require('../models/Warehouse')
 
 const getAllReviews = async (req, res, next) => {
     try {
@@ -28,7 +29,18 @@ const createReview = async (req, res, next) => {
             startTime, safety, overnightParking, hasLumper
         })
 
-        res.status(201).json(warehouse)
+        // add review to warehouse
+        const wh = await Warehouse.findById(warehouse)
+        if (!wh) {
+            // Rollback: delete the review we just created
+            await Review.findByIdAndDelete(review._id);
+            return res.status(404).json({ error: 'Warehouse not found' });
+        }
+        wh.reviews = wh.reviews || []
+        wh.reviews.push(review._id)
+        await wh.save()
+
+        res.status(201).json(review)
     }
     catch (err) {
         next(err)

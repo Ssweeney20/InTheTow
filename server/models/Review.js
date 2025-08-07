@@ -30,6 +30,8 @@ const ReviewSchema = new mongoose.Schema(
         safety: Boolean,
 
         overnightParking: Boolean,
+
+        dateCreated : Date
     },
     {
         timestamps: true

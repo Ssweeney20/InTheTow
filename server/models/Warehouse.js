@@ -38,6 +38,10 @@ const WarehouseSchema = new mongoose.Schema(
             unique: true,
             sparse: true,
         },
+        reviews: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Review'
+        }],
         hasLumper: Boolean,
         nameSearchKey: { 
             type: String, 
