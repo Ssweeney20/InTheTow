@@ -16,14 +16,23 @@ const ReviewSchema = new mongoose.Schema(
         reviewText: {
             type: String,
         },
-        pictures: {
-            type: String,
-        },
+        pictures: [String],
         appointmentTime: Date,
 
-        startTime: Date,
-
-        endTime: Date,
+        startTime: {
+            type : Date,
+            required: function() {
+                // if endTime is set, then startTime becomes required
+                return this.endTime != null;
+            },
+        },
+        endTime: {
+            type : Date,
+            required: function() {
+                // if startTime is set, then endTime becomes required
+                return this.startTime != null;
+            },
+        },
 
         hasLumper: Boolean,
 

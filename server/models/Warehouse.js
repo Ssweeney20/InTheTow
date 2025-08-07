@@ -42,6 +42,22 @@ const WarehouseSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Review'
         }],
+        avgRating: {
+            type: Number,
+            default : 0
+        },
+        numRatings: {
+            type: Number,
+            default : 0
+        },
+        avgTimeAtDock: {
+            type: Number,
+            default : 0
+        },
+        numTimeReports: {
+            type: Number,
+            default : 0
+        },
         hasLumper: Boolean,
         nameSearchKey: { 
             type: String, 
