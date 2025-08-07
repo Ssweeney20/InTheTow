@@ -70,7 +70,18 @@ const WarehouseSchema = new mongoose.Schema(
             type: Number, 
             default: 0
         },
+        safetyScore:{
+            type: Number, 
+            min: 1,
+            max: 5,
+            default: 0
+        },
+        numSafetyReports:{
+            type: Number, 
+            default: 0
+        },
         hasLumper: Boolean,
+        overnightParking: Boolean,
         nameSearchKey: { 
             type: String, 
             index: true 

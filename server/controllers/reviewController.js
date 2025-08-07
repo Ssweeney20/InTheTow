@@ -86,10 +86,34 @@ const createReview = async (req, res, next) => {
             await Review.findByIdAndDelete(review._id);
             return res.status(404).json({ error: 'Warehouse not found' })
         }
+        
+        // update warehouse lumper status
+        if (hasLumper == true){
+            wh.hasLumper = true
+        }
+        if (hasLumper == false){
+            wh.hasLumper = false
+        }
+
+        // update warehouse overnight parking status
+        if (overnightParking == true){
+            wh.overnightParking = true
+        }
+        if (overnightParking == false){
+            wh.overnightParking = false
+        }
 
         // update average rating
         const newCount = wh.numRatings + 1
         const newAvg = (wh.avgRating * wh.numRatings + rating) / newCount
+
+        // update safety rating
+        if (safety){
+            const newSafeCount = wh.numSafetyReports + 1
+            const newSafetyScore = (wh.safetyScore * wh.numSafetyReports + safety) / newSafeCount
+            wh.numSafetyReports = newSafeCount;
+            wh.safetyScore = newSafetyScore;
+        }
 
         // update average timespent at dock
         let newTimeReports = wh.numTimeReports
