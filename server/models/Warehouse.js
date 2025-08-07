@@ -58,6 +58,18 @@ const WarehouseSchema = new mongoose.Schema(
             type: Number,
             default : 0
         },
+        numAppointmentsReported:{
+            type: Number, 
+            default: 0
+        },
+        appointmentsOnTimeCount:{
+            type: Number, 
+            default: 0
+        },
+        appointmentsOnTimePercentage:{
+            type: Number, 
+            default: 0
+        },
         hasLumper: Boolean,
         nameSearchKey: { 
             type: String, 

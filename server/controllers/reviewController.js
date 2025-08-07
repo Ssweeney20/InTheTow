@@ -102,6 +102,16 @@ const createReview = async (req, res, next) => {
                 newTimeReports
         }
 
+        // update on time percentage
+        if (appointmentTime && startTime){
+            const newNumAppts = wh.numAppointmentsReported + 1
+            const wasOnTime = startTime <= appointmentTime ? 1 : 0
+            const newOnTimeCount = wh.appointmentsOnTimeCount + wasOnTime
+            const newOnTimePercentage = (newOnTimeCount / newNumAppts) * 100
+            wh.numAppointmentsReported = newNumAppts;
+            wh.appointmentsOnTimeCount = newOnTimeCount;
+            wh.appointmentsOnTimePercentage = newOnTimePercentage;
+        }
 
         wh.reviews = wh.reviews || []
         wh.reviews.push(review._id)
@@ -109,6 +119,7 @@ const createReview = async (req, res, next) => {
         wh.avgRating = newAvg
         wh.numTimeReports = newTimeReports
         wh.avgTimeAtDock = newAvgTime
+        
         await wh.save()
 
         res.status(201).json(review)
