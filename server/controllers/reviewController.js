@@ -11,6 +11,36 @@ const getAllReviews = async (req, res, next) => {
     }
 }
 
+const getReviewByID = async (req, res, next) => {
+    try {
+        const review = await Review.findById(req.params.id)
+        if (!review){
+            return res.status(404).json({ error: 'Review ID Not found' })
+        }
+        res.json(review)
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+const getReviewsByWarehouse = async (req, res, next) => {
+
+    const { warehouseID } = req.params;
+
+    try {
+        const exists = await Warehouse.exists({_id: warehouseID});
+        if (!exists) {
+            return res.status(404).json({ error: 'Warehouse not found' });
+        }
+        const reviews = await Review.find({warehouse: warehouseID}).sort({createdAt: -1})
+        res.json(reviews)
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
 const createReview = async (req, res, next) => {
     try {
         const {rating, warehouse, reviewText, pictures, appointmentTime,
@@ -49,5 +79,7 @@ const createReview = async (req, res, next) => {
 
 module.exports = {
     getAllReviews,
-    createReview
+    createReview,
+    getReviewByID,
+    getReviewsByWarehouse,
 }
