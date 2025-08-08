@@ -1,5 +1,13 @@
 const mongoose = require('mongoose')
 
+function normalize(str = '') {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, '')   
+    .replace(/\s+/g, ' ')          
+    .trim();
+}
+
 const WarehouseSchema = new mongoose.Schema(
     {
         name: {
@@ -7,9 +15,21 @@ const WarehouseSchema = new mongoose.Schema(
             required: true,
 
         },
-        address: {
+        streetAddress: {
             type: String,
             unique: true,
+            required: true,
+        },
+        city: {
+            type: String,
+            required: true,
+        },
+        state: {
+            type: String,
+            required: true,
+        },
+        zipCode: {
+            type: String,
             required: true,
         },
         phoneNumber: String,
@@ -18,13 +38,84 @@ const WarehouseSchema = new mongoose.Schema(
             unique: true,
             sparse: true,
         },
+        reviews: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Review'
+        }],
+        avgRating: {
+            type: Number,
+            default : 0
+        },
+        numRatings: {
+            type: Number,
+            default : 0
+        },
+        avgTimeAtDock: {
+            type: Number,
+            default : 0
+        },
+        numTimeReports: {
+            type: Number,
+            default : 0
+        },
+        numAppointmentsReported:{
+            type: Number, 
+            default: 0
+        },
+        appointmentsOnTimeCount:{
+            type: Number, 
+            default: 0
+        },
+        appointmentsOnTimePercentage:{
+            type: Number, 
+            default: 0
+        },
+        safetyScore:{
+            type: Number, 
+            min: 1,
+            max: 5,
+            default: 0
+        },
+        numSafetyReports:{
+            type: Number, 
+            default: 0
+        },
         hasLumper: Boolean,
-
+        overnightParking: Boolean,
+        nameSearchKey: { 
+            type: String, 
+            index: true 
+        },
+        addressSearchKey: { 
+            type: String, 
+            index: true 
+        },
+        citySearchKey:{ 
+            type: String, 
+            index: true 
+        },
+        stateSearchKey:{ 
+            type: String, 
+            index: true 
+        },
+        zipSearchKey:{ 
+            type: String, 
+            index: true 
+        }
     },
     {
         timestamps: true 
     }
 )
+
+WarehouseSchema.pre('save', function(next) {
+  this.nameSearchKey    = normalize(this.name);
+  this.addressSearchKey = normalize(this.streetAddress);
+  this.citySearchKey    = normalize(this.city);
+  this.stateSearchKey    = normalize(this.state);
+  this.zipSearchKey     = normalize(this.zipCode);
+  next();
+});
 
 const Warehouse = mongoose.model("Warehouse", WarehouseSchema)
 
