@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const corsOptions = {
@@ -5,7 +6,7 @@ const corsOptions = {
 };
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/inthetow')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('DB Connected!'))
   .catch((err) => console.log(err));
 

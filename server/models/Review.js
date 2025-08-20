@@ -36,7 +36,11 @@ const ReviewSchema = new mongoose.Schema(
 
         hasLumper: Boolean,
 
-        safety: Boolean,
+        safety:{
+            type: Number, 
+            min: 1,
+            max: 5,
+        },
 
         overnightParking: Boolean,
 
