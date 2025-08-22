@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useDebounce } from "react-use";
+
 import Search from "./components/Search";
 import Spinner from "./components/Spinner";
+import WarehouseCard from "./components/WarehouseCard";
+import Navbar from "./components/Navbar";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -15,13 +19,18 @@ function App() {
   const [errorMessage, seterrorMessage] = useState('');
   const [warehouseList, setwarehouseList] = useState([]);
   const [isLoading, setisLoading] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
-  const fetchWarehouses = async () => {
+  useDebounce(() => {
+    setDebouncedSearchTerm(searchTerm) 
+  }, 500, [searchTerm])
+
+  const fetchWarehouses = async (searchQuery = '') => {
     setisLoading(true);
     seterrorMessage('');
 
     try {
-      const endpoint = `${API_BASE_URL}warehouses`
+      const endpoint = searchQuery ? `${API_BASE_URL}warehouses/search?q=${encodeURIComponent(searchQuery)}` :`${API_BASE_URL}warehouses`
       
       const response = await fetch(endpoint, API_OPTIONS);
       if (!response.ok){
@@ -43,18 +52,19 @@ function App() {
       console.error(`error fetching warehouse: ${error}`);
       seterrorMessage("Error fetching warehouses, please try again later.");
     } finally {
-      setisLoading(true);
+      setisLoading(false);
     }
   }
 
   useEffect(() => {
-    fetchWarehouses();
-  }, []);
+    fetchWarehouses(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
 
   return (
     <main>
+        <Navbar/>
       <div className="pattern" />
-
+    
       <div className="wrapper">
         <header>
           <img src="./warehouse.png" className="w-[300px] h-[300px]" alt="Warehouse"></img>
@@ -64,7 +74,7 @@ function App() {
         </header>
 
         <section className="all-warehouses">
-          <h2>All Warehouses</h2>
+          <h2 className="mt-[40px]">Warehouses </h2>
 
           {isLoading ? (
             <Spinner/>
@@ -73,7 +83,7 @@ function App() {
           ): (
             <ul>
               {warehouseList.map((warehouse) => (
-                <p key = {warehouse._id} className="text-white">{warehouse.name}</p>
+                <WarehouseCard key={warehouse._id} warehouse={warehouse}/>
               ))}
             </ul>
           )}

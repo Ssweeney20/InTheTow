@@ -135,7 +135,7 @@
       @apply capitalize text-gray-100 font-medium text-base;
     }
 
-    & .content .year {
+    & .content .detail {
       @apply text-gray-100 font-medium text-base;
     }
   }
