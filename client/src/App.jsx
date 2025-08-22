@@ -1,45 +1,88 @@
-// src/App.jsx
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Search from "./components/Search";
+import Spinner from "./components/Spinner";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_OPTIONS = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json'
+  }
+}
 
 function App() {
-  const [warehouses, setWarehouses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [errorMessage, seterrorMessage] = useState('');
+  const [warehouseList, setwarehouseList] = useState([]);
+  const [isLoading, setisLoading] = useState(false);
+
+  const fetchWarehouses = async () => {
+    setisLoading(true);
+    seterrorMessage('');
+
+    try {
+      const endpoint = `${API_BASE_URL}warehouses`
+      
+      const response = await fetch(endpoint, API_OPTIONS);
+      if (!response.ok){
+        throw new Error("Failed to fetch warehouses")
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!Array.isArray(data)){
+        seterrorMessage(data.Error || 'Failed to fetch warehouses');
+        setwarehouseList([]);
+        return;
+      }
+
+      setwarehouseList(data|| []);
+
+    } catch (error) {
+      console.error(`error fetching warehouse: ${error}`);
+      seterrorMessage("Error fetching warehouses, please try again later.");
+    } finally {
+      setisLoading(true);
+    }
+  }
 
   useEffect(() => {
-    const fetchWarehouses = async () => {
-      try {
-        const { data } = await axios.get('http://localhost:8080/api/warehouses');
-        // if your controller does `res.json(list)`, `data` *is* the array
-        setWarehouses(data);
-      } catch (err) {
-        console.error('Failed to fetch warehouses:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchWarehouses();
   }, []);
 
-  if (loading) return <p>Loading warehouses…</p>;
-
   return (
-    <div className="App">
-      <h1>Warehouses</h1>
-      {warehouses.length === 0 ? (
-        <p>No warehouses found.</p>
-      ) : (
-        <ul>
-          {warehouses.map((wh) => (
-            <li key={wh._id}>
-              <strong>{wh.name}</strong><br/>
-              <em>{wh.address}</em>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <main>
+      <div className="pattern" />
+
+      <div className="wrapper">
+        <header>
+          <img src="./warehouse.png" className="w-[300px] h-[300px]" alt="Warehouse"></img>
+          <h1>Saving Truckers <span className="text-gradient">Time</span> at Every Stop</h1>
+
+          <Search searchTerm = {searchTerm} setSearchTerm = {setSearchTerm}/>
+        </header>
+
+        <section className="all-warehouses">
+          <h2>All Warehouses</h2>
+
+          {isLoading ? (
+            <Spinner/>
+          ) : errorMessage ? (
+            <p className="text-red-500">{errorMessage}</p>
+          ): (
+            <ul>
+              {warehouseList.map((warehouse) => (
+                <p key = {warehouse._id} className="text-white">{warehouse.name}</p>
+              ))}
+            </ul>
+          )}
+
+          {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+        </section>
+
+      </div>
+    </main>
   );
 }
 
