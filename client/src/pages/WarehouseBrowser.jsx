@@ -5,6 +5,7 @@ import Search from "../components/Search";
 import Spinner from "../components/Spinner";
 import WarehouseCard from "../components/WarehouseCard";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -38,7 +39,6 @@ const warehouseBrowser = () => {
             }
 
             const data = await response.json();
-            console.log(data);
 
             if (!Array.isArray(data)) {
                 seterrorMessage(data.Error || 'Failed to fetch warehouses');
@@ -83,7 +83,9 @@ const warehouseBrowser = () => {
                     ) : (
                         <ul>
                             {warehouseList.map((warehouse) => (
-                                <WarehouseCard key={warehouse._id} warehouse={warehouse} />
+                                <Link to={`${warehouse._id}`}>
+                                    <WarehouseCard key={warehouse._id} warehouse={warehouse} />
+                                </Link>
                             ))}
                         </ul>
                     )}
@@ -91,7 +93,7 @@ const warehouseBrowser = () => {
                     {errorMessage && <p className="text-red-500">{errorMessage}</p>}
                 </section>
 
-            </div>
+            </div>)
         </main>
     );
 }
