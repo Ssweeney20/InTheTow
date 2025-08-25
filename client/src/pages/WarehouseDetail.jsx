@@ -19,10 +19,16 @@ function classNames(...classes) {
 }
 
 export default function WarehouseDetail() {
+
     const { warehouseID } = useParams();
     const [isLoading, setisLoading] = useState(false);
     const [warehouse, setWarehouse] = useState(null);
     const [errorMessage, seterrorMessage] = useState('');
+
+    {/* Add Review states */ }
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
 
     const fetchWarehouse = async (searchQuery = '') => {
@@ -46,6 +52,53 @@ export default function WarehouseDetail() {
             seterrorMessage("Error fetching warehouse, please try again later.");
         } finally {
             setisLoading(false);
+        }
+    }
+
+
+    async function handleSubmitReview(e) {
+        e.preventDefault();
+        setSubmitting(true);
+        setSubmitError("");
+
+        try {
+            const form = new FormData(e.currentTarget);
+            const payload = {
+                warehouse: warehouse._id || warehouseID,
+                rating: Number(form.get("rating")),
+                safety: Number(form.get("safetyRating")),
+                reviewText: String(form.get("text")).trim(),
+                appointmentTime: form.get("appointmentTime")
+                    ? new Date(form.get("appointmentTime"))
+                    : null,
+                startTime: form.get("startTime")
+                    ? new Date(form.get("startTime"))
+                    : null,
+                endTime: form.get("endTime")
+                    ? new Date(form.get("endTime"))
+                    : null,
+                hasLumper: form.has("hasLumper"),
+                overnightParking: form.has("overnightParking"),
+            };
+
+            const res = await fetch(`${API_BASE_URL}reviews/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", accept: "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
+
+            // Optionally refresh the warehouse detail after posting:
+            // await fetchWarehouseById(id);
+
+            setIsReviewOpen(false);
+            e.currentTarget.reset();
+        } catch (err) {
+            console.error(err);
+            setSubmitError("Could not submit review. Please try again.");
+        } finally {
+            setSubmitting(false);
         }
     }
 
@@ -155,7 +208,7 @@ export default function WarehouseDetail() {
 
                                 {/* Stat cards */}
                                 <div className="mt-6 grid grid-cols-2 gap-3">
-                            
+
                                     <div className="rounded-lg border border-gray-200 p-3">
                                         <div className="text-sm text-gray-600">Average Time at Dock</div>
                                         <div className="mt-1 text-lg font-semibold text-gray-900">
@@ -187,6 +240,16 @@ export default function WarehouseDetail() {
                                             {(warehouse.numAppointmentsReported ?? 0)} appointments
                                         </div>
                                     </div>
+
+                                    {/* Add Review button */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsReviewOpen(true)}
+                                        className="mt-4 inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    >
+                                        Add Review
+                                    </button>
+
                                 </div>
                             </div>
 
@@ -232,12 +295,186 @@ export default function WarehouseDetail() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Add Review Modal */}
+                        {isReviewOpen && (
+                            <div
+                                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                                role="dialog"
+                                aria-modal="true"
+                            >
+                                {/* Backdrop */}
+                                <div
+                                    className="absolute inset-0 bg-black/50"
+                                    onClick={() => setIsReviewOpen(false)}
+                                />
+
+                                {/* Panel */}
+                                <div className="relative z-10 w-full max-w-md rounded-xl bg-white shadow-xl
+                    max-h-[85vh] flex flex-col">
+                                    <div className="flex items-start justify-between p-5 border-b">
+                                        <h3 className="text-lg font-semibold text-gray-900">
+                                            Share your experience
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReviewOpen(false)}
+                                            className="ml-3 rounded-md p-1 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                            aria-label="Close"
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+
+                                    <form onSubmit={handleSubmitReview} className="flex-1 overflow-y-auto p-5 space-y-4">
+                                        {/* Rating */}
+                                        <div>
+                                            <label htmlFor="rating" className="block text-sm font-medium text-gray-700">
+                                                Rating (1–5)
+                                            </label>
+                                            <input
+                                                id="rating"
+                                                name="rating"
+                                                type="number"
+                                                min="1"
+                                                max="5"
+                                                step="1"
+                                                required
+                                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        {/* Appointment Time */}
+                                        <div>
+                                            <label htmlFor="appointmentTime" className="block text-sm font-medium text-gray-700">
+                                                Appointment Time
+                                            </label>
+                                            <input
+                                                id="appointmentTime"
+                                                name="appointmentTime"
+                                                type="datetime-local"
+                                                required
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
+                                            />
+                                        </div>
+
+                                        {/* Start Time */}
+                                        <div>
+                                            <label htmlFor="startTime" className="block text-sm font-medium text-gray-700">
+                                                Start of Docked Time
+                                            </label>
+                                            <input
+                                                id="startTime"
+                                                name="startTime"
+                                                type="datetime-local"
+                                                required
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
+                                            />
+                                        </div>
+
+                                        {/* End Time */}
+                                        <div>
+                                            <label htmlFor="endTime" className="block text-sm font-medium text-gray-700">
+                                                End of Docked Time (Departure)
+                                            </label>
+                                            <input
+                                                id="endTime"
+                                                name="endTime"
+                                                type="datetime-local"
+                                                required
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
+                                            />
+                                        </div>
+
+                                        {/* Safety Rating */}
+                                        <div>
+                                            <label htmlFor="safetyRating" className="block text-sm font-medium text-gray-700">
+                                                Safety Rating (1–5)
+                                            </label>
+                                            <input
+                                                id="safetyRating"
+                                                name="safetyRating"
+                                                type="number"
+                                                min="1"
+                                                max="5"
+                                                step="1"
+                                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        {/* Text */}
+                                        <div>
+                                            <label htmlFor="text" className="block text-sm font-medium text-gray-700">
+                                                Comments
+                                            </label>
+                                            <textarea
+                                                id="text"
+                                                name="text"
+                                                rows={4}
+                                                placeholder="Share your experience: wait time, staff, dock tips, etc."
+                                                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
+                                            />
+                                        </div>
+
+                                        {/* hasLumper */}
+                                        <div>
+                                            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                                                <input
+                                                    id="hasLumper"
+                                                    name="hasLumper"
+                                                    type="checkbox"
+                                                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                />
+                                                Lumper Fee Required?
+                                            </label>
+                                        </div>
+
+                                        {/* overnightParking */}
+                                        <div>
+                                            <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                                                <input
+                                                    id="overnightParking"
+                                                    name="overnightParking"
+                                                    type="checkbox"
+                                                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                />
+                                                Overnight Parking Available ?
+                                            </label>
+                                        </div>
+
+                                        {submitError && (
+                                            <p className="text-sm text-red-600">{submitError}</p>
+                                        )}
+
+                                        <div className="flex items-center justify-end gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsReviewOpen(false)}
+                                                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={submitting}
+                                                className="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                                            >
+                                                {submitting ? "Submitting…" : "Submit Review"}
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
                     </div>
+
+
 
                     {/* Spacer */}
                     <div className="h-6" />
-                </div>
-            )}
+                </div >
+            )
+            }
         </>
     );
 }
