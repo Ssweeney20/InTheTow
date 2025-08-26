@@ -121,8 +121,9 @@ const createReview = async (req, res, next) => {
         if (startTime && endTime) {
             newTimeReports++
             const diffMs = endTime - startTime
+            const diffMinutes = Math.floor(diffMs / (1000 * 60));
             newAvgTime =
-                (wh.avgTimeAtDock * wh.numTimeReports + diffMs) /
+                (wh.avgTimeAtDock * wh.numTimeReports + diffMinutes) /
                 newTimeReports
         }
 

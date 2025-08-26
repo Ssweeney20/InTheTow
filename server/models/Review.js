@@ -20,24 +20,31 @@ const ReviewSchema = new mongoose.Schema(
         appointmentTime: Date,
 
         startTime: {
-            type : Date,
-            required: function() {
+            type: Date,
+            required: function () {
                 // if endTime is set, then startTime becomes required
                 return this.endTime != null;
             },
         },
         endTime: {
-            type : Date,
-            required: function() {
+            type: Date,
+            required: function () {
                 // if startTime is set, then endTime becomes required
                 return this.startTime != null;
             },
+            validate: {
+                validator: function (value) {
+                    // only validate if both dates are set
+                    return value > this.startTime;
+                },
+                message: "endTime must be after startTime"
+            }
         },
 
         hasLumper: Boolean,
 
-        safety:{
-            type: Number, 
+        safety: {
+            type: Number,
             min: 1,
             max: 5,
         },

@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
+import ReviewCard from '../components/ReviewCard';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -90,7 +91,7 @@ export default function WarehouseDetail() {
             if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
 
             // Optionally refresh the warehouse detail after posting:
-            // await fetchWarehouseById(id);
+            await fetchWarehouse(warehouseID);
 
             setIsReviewOpen(false);
             e.currentTarget.reset();
@@ -212,7 +213,7 @@ export default function WarehouseDetail() {
                                     <div className="rounded-lg border border-gray-200 p-3">
                                         <div className="text-sm text-gray-600">Average Time at Dock</div>
                                         <div className="mt-1 text-lg font-semibold text-gray-900">
-                                            {warehouse.avgTimeAtDock != null ? `${Math.round(warehouse.avgTimeAtDock)}m` : "—"}
+                                            {warehouse.avgTimeAtDock != null ? `${Math.round(warehouse.avgTimeAtDock)} minutes` : "—"}
                                         </div>
                                         <div className="text-xs text-gray-500">
                                             {(warehouse.numTimeReports ?? 0)} time reports
@@ -277,6 +278,7 @@ export default function WarehouseDetail() {
                                 <div className="mt-10">
                                     <h2 className="text-sm font-medium text-gray-900">Reviews</h2>
                                     <div className="mt-4 space-y-4">
+                                        <ReviewCard data={warehouse ?? {}}/>
                                         {(warehouse.reviews ?? []).length === 0 ? (
                                             <p className="text-sm text-gray-600">No reviews yet.</p>
                                         ) : (
