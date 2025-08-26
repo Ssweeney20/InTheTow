@@ -59,7 +59,7 @@ const ReviewSchema = new mongoose.Schema(
 
 ReviewSchema.virtual('loadDuration').get(function () {
     if (this.startTime && this.endTime) {
-        return this.startTime - this.endTime;
+        return this.endTime - this.startTime;
     }
     return null;
 });

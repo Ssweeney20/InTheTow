@@ -5,6 +5,12 @@ const ReviewCard = (props) => {
 
     const review = props.data;
 
+    const durationMs = new Date(review.endTime) - new Date(review.startTime);
+    const durationMinutes = Math.round(durationMs / 1000 / 60);
+
+    const hasLumper = review.hasLumper ? "Yes" : "No"
+    const hasOvernight = review.overnightParking ? "Yes" : "No"
+
     return (
         <div class="flex items-start">
             <div class="flex-shrink-0">
@@ -20,29 +26,53 @@ const ReviewCard = (props) => {
             </div>
             <div class="ml-6">
                 <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">Name Goes Here</span>
+                    <span class="text-gray-600 font-bold">UserName</span>
                     <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
                 </p>
                 <div class="flex items-center mt-1">
                     {[0, 1, 2, 3, 4].map((i) => (
-                                <svg class={review.rating > i ? "w-4 h-4 fill-current text-yellow-600" : "w-4 h-4 fill-current text-gray-400"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
-                            ))}
+                        <svg class={review.rating > i ? "w-4 h-4 fill-current text-yellow-600" : "w-4 h-4 fill-current text-gray-400"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
+                    ))}
                 </div>
-                <div class="flex items-center mt-4 text-gray-600">
-                    <div class="flex items-center">
-                        <span class="text-sm">Warehouse Rating</span>
-                        <div class="flex items-center ml-2">
+                <div className="flex items-center mt-4 text-gray-600 divide-x divide-gray-300">
+                    <div className="flex items-center px-4">
+                        <span className="text-sm">Time Docked:</span>
+                        <div className="flex items-center ml-2">
+                            <span className="text-sm">{durationMinutes} Minutes</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center px-4">
+                        <span className="text-sm">Safety Rating:</span>
+                        <div className="flex items-center ml-2">
                             {[0, 1, 2, 3, 4].map((i) => (
-                                <svg class={review.rating > i ? "w-3 h-3 fill-current text-yellow-600" : "w-3 h-3 fill-current text-gray-400"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
+                                <svg
+                                    key={i}
+                                    className={
+                                        review.safety > i
+                                            ? "w-3 h-3 fill-current text-yellow-600"
+                                            : "w-3 h-3 fill-current text-gray-400"
+                                    }
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                                </svg>
                             ))}
                         </div>
                     </div>
-                    <div class="flex items-center ml-4">
-                        <span class="text-sm">Safety Rating</span>
-                        <div class="flex items-center ml-2">
-                            {[0, 1, 2, 3, 4].map((i) => (
-                                <svg class={review.safety > i ? "w-3 h-3 fill-current text-yellow-600" : "w-3 h-3 fill-current text-gray-400"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
-                            ))}
+
+                    <div className="flex items-center px-4">
+                        <span className="text-sm">Lumper:</span>
+                        <div className="flex items-center ml-2">
+                            <span className="text-sm">{hasLumper}</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center px-4">
+                        <span className="text-sm">Overnight Parking:</span>
+                        <div className="flex items-center ml-2">
+                            <span className="text-sm">{hasOvernight}</span>
                         </div>
                     </div>
                 </div>
@@ -51,8 +81,7 @@ const ReviewCard = (props) => {
                 </div>
                 <div class="flex items-center justify-between mt-4 text-sm text-gray-600 fill-current">
                     <button class="flex items-center">
-                        <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.08 12.16A2.99 2.99 0 0 1 0 10a3 3 0 0 1 5.08-2.16l8.94-4.47a3 3 0 1 1 .9 1.79L5.98 9.63a3.03 3.03 0 0 1 0 .74l8.94 4.47A2.99 2.99 0 0 1 20 17a3 3 0 1 1-5.98-.37l-8.94-4.47z" /></svg>
-                        <span class="ml-2">Share</span>
+                        <span className="text-sm">{new Date(review.createdAt).toLocaleDateString()}</span>
                     </button>
                     <div class="flex items-center">
                         <span>Was this review helplful?</span>

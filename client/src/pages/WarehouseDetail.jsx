@@ -242,8 +242,14 @@ export default function WarehouseDetail() {
 
                                     <div className="rounded-lg border border-gray-200 p-3">
                                         <div className="text-sm text-gray-600">Safety Score</div>
-                                        <div className="mt-1 text-lg font-semibold text-gray-900">
-                                            {warehouse.safetyScore ?? "—"}
+                                        <div className="mt-1 mb-2 flex text-lg font-semibold text-gray-900">
+                                            {[0, 1, 2, 3, 4].map((i) => (
+                                                <StarIcon
+                                                    key={i}
+                                                    aria-hidden="true"
+                                                    className={(warehouse.safetyScore || 0) > i ? "size-5 text-indigo-600" : "size-5 text-gray-200"}
+                                                />
+                                            ))}
                                         </div>
                                         <div className="text-xs text-gray-500">
                                             {(warehouse.numSafetyReports ?? 0)} reports
@@ -304,7 +310,7 @@ export default function WarehouseDetail() {
                                             <ul className="space-y-3">
                                                 {(reviews ?? []).map((r, i) => (
                                                     <li key={r._id || i} className="rounded-md border border-gray-200 p-3">
-                                                        <ReviewCard data={r ?? {}}/>
+                                                        <ReviewCard data={r ?? {}} />
                                                     </li>
                                                 ))}
                                             </ul>
