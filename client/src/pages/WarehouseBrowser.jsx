@@ -93,7 +93,7 @@ const warehouseBrowser = () => {
                     {errorMessage && <p className="text-red-500">{errorMessage}</p>}
                 </section>
 
-            </div>)
+            </div>
         </main>
     );
 }

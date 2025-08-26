@@ -13,8 +13,6 @@ const API_OPTIONS = {
     }
 }
 
-const reviews = { href: '#', average: 4, totalCount: 117 }
-
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -24,6 +22,7 @@ export default function WarehouseDetail() {
     const { warehouseID } = useParams();
     const [isLoading, setisLoading] = useState(false);
     const [warehouse, setWarehouse] = useState(null);
+    const [reviews, setReviews] = useState([])
     const [errorMessage, seterrorMessage] = useState('');
 
     {/* Add Review states */ }
@@ -48,11 +47,32 @@ export default function WarehouseDetail() {
 
             setWarehouse(data || {});
 
+            await fetchReviews(warehouseID)
+
         } catch (error) {
             console.error(`error fetching warehouse: ${error}`);
             seterrorMessage("Error fetching warehouse, please try again later.");
         } finally {
             setisLoading(false);
+        }
+    }
+
+    const fetchReviews = async (searchQuery = '') => {
+        try {
+            const endpoint = `${API_BASE_URL}reviews/warehouse/${encodeURIComponent(searchQuery)}`;
+
+            const response = await fetch(endpoint, API_OPTIONS);
+            if (!response.ok) {
+                throw new Error("Failed to fetch reviews")
+            }
+
+            const data = await response.json();
+
+            setReviews(data || []);
+
+        } catch (error) {
+            console.error(`error fetching reviews: ${error}`);
+            seterrorMessage("Error fetching reviews, please try again later.");
         }
     }
 
@@ -274,21 +294,17 @@ export default function WarehouseDetail() {
                                     </div>
                                 </div>
 
-                                {/* Reviews (placeholder; wire up later) */}
+                                {/* Reviews*/}
                                 <div className="mt-10">
                                     <h2 className="text-sm font-medium text-gray-900">Reviews</h2>
                                     <div className="mt-4 space-y-4">
-                                        <ReviewCard data={warehouse ?? {}}/>
-                                        {(warehouse.reviews ?? []).length === 0 ? (
+                                        {(reviews ?? []).length === 0 ? (
                                             <p className="text-sm text-gray-600">No reviews yet.</p>
                                         ) : (
                                             <ul className="space-y-3">
-                                                {(warehouse.reviews ?? []).map((r, i) => (
+                                                {(reviews ?? []).map((r, i) => (
                                                     <li key={r._id || i} className="rounded-md border border-gray-200 p-3">
-                                                        <p className="text-sm text-gray-900">{r.text}</p>
-                                                        {r.rating != null && (
-                                                            <p className="text-xs text-gray-500 mt-1">Rating: {r.rating}/5</p>
-                                                        )}
+                                                        <ReviewCard data={r ?? {}}/>
                                                     </li>
                                                 ))}
                                             </ul>
