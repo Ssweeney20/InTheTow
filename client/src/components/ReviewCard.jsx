@@ -5,11 +5,17 @@ const ReviewCard = (props) => {
 
     const review = props.data;
 
+    // Calculate Load Duration
     const durationMs = new Date(review.endTime) - new Date(review.startTime);
     const durationMinutes = Math.round(durationMs / 1000 / 60);
 
     const hasLumper = review.hasLumper ? "Yes" : "No"
     const hasOvernight = review.overnightParking ? "Yes" : "No"
+
+    // Calculate how early or late truck was seen in hours
+    // Negative indicates seen early, positive indicates seen late
+    const actualSeenMs = new Date(review.startTime) - new Date(review.appointmentTime);
+    const actualSeenMinutes = Math.round(actualSeenMs / 1000 / 60);
 
     return (
         <div class="flex items-start">
@@ -63,18 +69,12 @@ const ReviewCard = (props) => {
                     </div>
 
                     <div className="flex items-center px-4">
-                        <span className="text-sm">Lumper:</span>
+                        <span className="text-sm">Time Seen:</span>
                         <div className="flex items-center ml-2">
-                            <span className="text-sm">{hasLumper}</span>
+                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time": actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center px-4">
-                        <span className="text-sm">Overnight Parking:</span>
-                        <div className="flex items-center ml-2">
-                            <span className="text-sm">{hasOvernight}</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="mt-3">
                     <p class="mt-1">{review.reviewText}</p>

@@ -38,7 +38,7 @@ const WarehouseCard = ({ warehouse }) => {
 
                     <p className='detail'>{streetAddress}, {city}, {state}</p>
 
-                    <p className='detail'>Average Time at Dock : {avgTimeAtDock} Minutes</p>
+                    <p className='detail'>Average Time at Dock : {Math.round(avgTimeAtDock)} Minutes</p>
 
                 </div>
             </div>

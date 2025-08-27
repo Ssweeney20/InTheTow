@@ -213,7 +213,7 @@ export default function WarehouseDetail() {
                                 <div className="mt-2">
                                     <div className="flex items-center">
                                         <div className="flex items-center">
-                                            {[0, 1, 2, 3, 4].map((i) => (
+                                            {[0, 1.6, 2.6, 3.6, 4.6].map((i) => (
                                                 <StarIcon
                                                     key={i}
                                                     aria-hidden="true"
@@ -222,7 +222,7 @@ export default function WarehouseDetail() {
                                             ))}
                                         </div>
                                         <span className="ml-3 text-sm text-gray-700">
-                                            {(warehouse.avgRating ?? "—")} avg · {(warehouse.numRatings ?? 0)} ratings
+                                            {((Math.round((Number(warehouse.avgRating) * 10)) / 10) ?? "—")} avg · {(warehouse.numRatings ?? 0)} ratings
                                         </span>
                                     </div>
                                 </div>
@@ -243,7 +243,7 @@ export default function WarehouseDetail() {
                                     <div className="rounded-lg border border-gray-200 p-3">
                                         <div className="text-sm text-gray-600">Safety Score</div>
                                         <div className="mt-1 mb-2 flex text-lg font-semibold text-gray-900">
-                                            {[0, 1, 2, 3, 4].map((i) => (
+                                            {[0, 1.5, 2.5, 3.5, 4.5].map((i) => (
                                                 <StarIcon
                                                     key={i}
                                                     aria-hidden="true"
