@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
+    reviews: [{
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Review'
+            }],
 
 })
 

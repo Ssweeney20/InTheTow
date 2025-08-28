@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-
 const reviewController = require('../controllers/reviewController')
+const requireAuth = require('../middleware/requireAuth')
 
 router.get('/', reviewController.getAllReviews)
 
@@ -9,6 +9,8 @@ router.get('/:id', reviewController.getReviewByID)
 
 router.get('/warehouse/:warehouseID', reviewController.getReviewsByWarehouse);
 
-router.post('/', reviewController.createReview)
+router.get('/user/:userID', requireAuth, reviewController.getReviewsByUser);
 
-module.exports = router
+router.post('/', requireAuth, reviewController.createReview)
+
+module.exports = router 

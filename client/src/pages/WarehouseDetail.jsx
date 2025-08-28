@@ -4,6 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
 import ReviewCard from '../components/ReviewCard';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -18,7 +19,7 @@ function classNames(...classes) {
 }
 
 export default function WarehouseDetail() {
-
+    const { user } = useAuthContext()
     const { warehouseID } = useParams();
     const [isLoading, setisLoading] = useState(false);
     const [warehouse, setWarehouse] = useState(null);
@@ -79,47 +80,49 @@ export default function WarehouseDetail() {
 
     async function handleSubmitReview(e) {
         e.preventDefault();
-        setSubmitting(true);
-        setSubmitError("");
+        if (user) {
+            setSubmitting(true);
+            setSubmitError("");
 
-        try {
-            const form = new FormData(e.currentTarget);
-            const payload = {
-                warehouse: warehouse._id || warehouseID,
-                rating: Number(form.get("rating")),
-                safety: Number(form.get("safetyRating")),
-                reviewText: String(form.get("text")).trim(),
-                appointmentTime: form.get("appointmentTime")
-                    ? new Date(form.get("appointmentTime"))
-                    : null,
-                startTime: form.get("startTime")
-                    ? new Date(form.get("startTime"))
-                    : null,
-                endTime: form.get("endTime")
-                    ? new Date(form.get("endTime"))
-                    : null,
-                hasLumper: form.has("hasLumper"),
-                overnightParking: form.has("overnightParking"),
-            };
+            try {
+                const form = new FormData(e.currentTarget);
+                const payload = {
+                    warehouse: warehouse._id || warehouseID,
+                    rating: Number(form.get("rating")),
+                    safety: Number(form.get("safetyRating")),
+                    reviewText: String(form.get("text")).trim(),
+                    appointmentTime: form.get("appointmentTime")
+                        ? new Date(form.get("appointmentTime"))
+                        : null,
+                    startTime: form.get("startTime")
+                        ? new Date(form.get("startTime"))
+                        : null,
+                    endTime: form.get("endTime")
+                        ? new Date(form.get("endTime"))
+                        : null,
+                    hasLumper: form.has("hasLumper"),
+                    overnightParking: form.has("overnightParking"),
+                };
 
-            const res = await fetch(`${API_BASE_URL}reviews/`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json", accept: "application/json" },
-                body: JSON.stringify(payload),
-            });
+                const res = await fetch(`${API_BASE_URL}reviews/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", accept: "application/json", "Authorization": `Bearer ${user.token}` },
+                    body: JSON.stringify(payload),
+                });
 
-            if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
+                if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
 
-            // Optionally refresh the warehouse detail after posting:
-            await fetchWarehouse(warehouseID);
+                // Optionally refresh the warehouse detail after posting:
+                await fetchWarehouse(warehouseID);
 
-            setIsReviewOpen(false);
-            e.currentTarget.reset();
-        } catch (err) {
-            console.error(err);
-            setSubmitError("Could not submit review. Please try again.");
-        } finally {
-            setSubmitting(false);
+                setIsReviewOpen(false);
+                e.currentTarget.reset();
+            } catch (err) {
+                console.error(err);
+                setSubmitError("Could not submit review. Please try again.");
+            } finally {
+                setSubmitting(false);
+            }
         }
     }
 
@@ -269,13 +272,16 @@ export default function WarehouseDetail() {
                                     </div>
 
                                     {/* Add Review button */}
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsReviewOpen(true)}
-                                        className="mt-4 inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                    >
-                                        Add Review
-                                    </button>
+                                    {user && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsReviewOpen(true)}
+                                            className="mt-4 inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                        >
+                                            Add Review
+                                        </button>
+                                    )}
+
 
                                 </div>
                             </div>

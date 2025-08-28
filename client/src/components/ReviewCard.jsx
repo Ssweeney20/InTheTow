@@ -32,7 +32,7 @@ const ReviewCard = (props) => {
             </div>
             <div class="ml-6">
                 <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">UserName</span>
+                    <span class="text-gray-600 font-bold">{review.user}</span>
                     <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
                 </p>
                 <div class="flex items-center mt-1">
