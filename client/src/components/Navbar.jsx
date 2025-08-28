@@ -1,6 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
+import { useLogout } from '../hooks/useLogout' 
 
 const navigation = [
     { name: 'Home', href: '/', current: true },
@@ -19,6 +20,12 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+    const { logout } = useLogout()
+
+    const handleLogout = () => {
+        logout()
+    }
+
     return (
         <Disclosure
             as="nav"
@@ -115,12 +122,12 @@ export default function Navbar() {
                                     </a>
                                 </MenuItem>
                                 <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                                    <button
+                                        onClick={handleLogout}
+                                        className="block w-full px-4 py-2 text-left text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
                                     >
                                         Sign out
-                                    </a>
+                                    </button>
                                 </MenuItem>
                             </MenuItems>
                         </Menu>

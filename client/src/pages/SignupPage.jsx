@@ -1,14 +1,16 @@
 import { useState } from "react"
 import Navbar from "../components/Navbar"
+import { useSignup } from '../hooks/useSignup'
 
 export default function SignupPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const { signup, error, isLoading } = useSignup()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        console.log(email, password)
+        await signup(email, password)
     }
 
     return (
@@ -81,19 +83,16 @@ export default function SignupPage() {
                             <button
                                 type="submit"
                                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                                disabled= {isLoading}
                             >
                                 Sign in
                             </button>
                         </div>
                     </form>
 
-                    <p className="mt-10 text-center text-sm/6 text-gray-400">
-                        Not a member?{' '}
-                        <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                            Start a 14 day free trial
-                        </a>
-                    </p>
+                    {error && <div className="mt-4 rounded-md bg-red-500/10 p-3 text-sm text-red-400 border border-red-500/30">{error}</div>}
                 </div>
+            
             </div>
         </>
     )
