@@ -9,6 +9,11 @@ const navigation = [
     { name: 'About', href: '#', current: false },
 ]
 
+const authNavigation = [
+    { name: 'Login', href: '/login', current: false },
+    { name: 'Sign Up', href: '/signup', current: false },
+]
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -57,6 +62,17 @@ export default function Navbar() {
                         </div>
                     </div>
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+                        {authNavigation.map((item) => (
+                            <Link
+                                key={item.name}
+                                to={item.href}
+                                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+
                         <button
                             type="button"
                             className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
