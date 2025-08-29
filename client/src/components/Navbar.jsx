@@ -7,7 +7,7 @@ import { useAuthContext } from '../hooks/useAuthContext.js'
 const navigation = [
     { name: 'Home', href: '/', current: true },
     { name: 'Warehouses', href: '/warehouses', current: false },
-    { name: 'Reviews', href: '#', current: false },
+    { name: 'Reviews', href: '/reviews', current: false },
     { name: 'About', href: '#', current: false },
 ]
 
@@ -55,6 +55,7 @@ export default function Navbar() {
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
+                                (!(item.name === 'Reviews')) ? (
                                     <Link
                                         key={item.name}
                                         to={item.href}
@@ -65,8 +66,21 @@ export default function Navbar() {
                                         )}
                                     >
                                         {item.name}
-                                    </Link>
-                                ))}
+                                    </Link>) : ((user && (
+                                        <Link
+                                        key={item.name}
+                                        to={item.href}
+                                        aria-current={item.current ? 'page' : undefined}
+                                        className={classNames(
+                                            item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            'rounded-md px-3 py-2 text-sm font-medium',
+                                        )}
+                                    >
+                                        {item.name}
+                                    </Link>)
+                                    ))
+                                    )
+                                )}
                             </div>
                         </div>
                     </div>
