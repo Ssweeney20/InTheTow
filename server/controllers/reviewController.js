@@ -1,5 +1,6 @@
 const Review = require('../models/Review')
 const Warehouse = require('../models/Warehouse')
+const User = require('../models/User')
 
 const getAllReviews = async (req, res, next) => {
     try {
@@ -24,6 +25,23 @@ const getReviewByID = async (req, res, next) => {
     }
 }
 
+const getReviewsByUser = async (req, res, next) => {
+
+    const userID  = req.user;
+
+    try {
+        const exists = await User.exists({ _id: userID });
+        if (!exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const reviews = await Review.find({ user: userID }).sort({ createdAt: -1 })
+        res.json(reviews)
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
 const getReviewsByWarehouse = async (req, res, next) => {
 
     const { warehouseID } = req.params;
@@ -42,8 +60,10 @@ const getReviewsByWarehouse = async (req, res, next) => {
 }
 
 const createReview = async (req, res, next) => {
+
+    console.log('req.user in createReview:', req.user);
     try {
-        const { rating, warehouse, reviewText, pictures,
+        const {rating, warehouse, reviewText, pictures,
             safety, overnightParking, hasLumper
         } = req.body
 
@@ -76,8 +96,17 @@ const createReview = async (req, res, next) => {
 
         const review = await Review.create({
             rating, warehouse, reviewText, pictures, appointmentTime,
-            startTime, endTime, safety, overnightParking, hasLumper
+            startTime, endTime, safety, overnightParking, hasLumper, user : req.user
         })
+
+        // add review to user
+        account = await User.findById(req.user)
+        if (!account){
+             throw new Error('User not found')
+        }
+        account.reviews.addToSet(review._id)
+        await account.save()
+
 
         // add review to warehouse
         const wh = await Warehouse.findById(warehouse)
@@ -159,4 +188,5 @@ module.exports = {
     createReview,
     getReviewByID,
     getReviewsByWarehouse,
+    getReviewsByUser
 }

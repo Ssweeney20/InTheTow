@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 
 const ReviewSchema = new mongoose.Schema(
     {
+        user : {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            ref: 'User'
+        },
         warehouse: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,

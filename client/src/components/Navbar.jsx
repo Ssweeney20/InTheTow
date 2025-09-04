@@ -1,19 +1,37 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
+import { useLogout } from '../hooks/useLogout.js'
+import { useAuthContext } from '../hooks/useAuthContext.js'
 
 const navigation = [
-    { name: 'Home', href: '/', current: true },
+    { name: 'Home', href: '/', current: false },
     { name: 'Warehouses', href: '/warehouses', current: false },
-    { name: 'Reviews', href: '#', current: false },
+    { name: 'My Reviews', href: '/reviews', current: false },
     { name: 'About', href: '#', current: false },
+]
+
+const authNavigation = [
+    { name: 'Login', href: '/login', current: false },
+    { name: 'Sign Up', href: '/signup', current: false },
 ]
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar(props) {
+    const currentPage = props.data
+
+    // set current page
+
+    const { logout } = useLogout()
+    const { user } = useAuthContext()
+
+    const handleLogout = () => {
+        logout()
+    }
+
     return (
         <Disclosure
             as="nav"
@@ -41,73 +59,110 @@ export default function Navbar() {
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
+                                (!(item.name === 'My Reviews')) ? (
                                     <Link
                                         key={item.name}
                                         to={item.href}
-                                        aria-current={item.current ? 'page' : undefined}
+                                        aria-current={item.name === currentPage ? 'page' : undefined}
                                         className={classNames(
-                                            item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                             'rounded-md px-3 py-2 text-sm font-medium',
                                         )}
                                     >
                                         {item.name}
-                                    </Link>
-                                ))}
+                                    </Link>) : ((user && (
+                                        <Link
+                                        key={item.name}
+                                        to={item.href}
+                                        aria-current={item.name === currentPage ? 'page' : undefined}
+                                        className={classNames(
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            'rounded-md px-3 py-2 text-sm font-medium',
+                                        )}
+                                    >
+                                        {item.name}
+                                    </Link>)
+                                    ))
+                                    )
+                                )}
                             </div>
                         </div>
                     </div>
+
                     <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                        <button
-                            type="button"
-                            className="relative rounded-full p-1 text-gray-400 hover:text-white focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500"
-                        >
-                            <span className="absolute -inset-1.5" />
-                            <span className="sr-only">View notifications</span>
-                            <BellIcon aria-hidden="true" className="size-6" />
-                        </button>
+                        {!user && (
+
+                            authNavigation.map((item) => (
+                                <Link
+                                    key={item.name}
+                                    to={item.href}
+                                    aria-current={item.name === currentPage ? 'page' : undefined}
+                                        className={classNames(
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            'rounded-md px-3 py-2 text-sm font-medium',
+                                        )}
+                                >
+                                    {item.name}
+                                </Link>
+                            ))
+
+                        )}
+
+                        {user && (
+                            <a
+                                className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                            >
+                                {user.email}
+                            </a>
+                        )}
+
+
 
                         {/* Profile dropdown */}
-                        <Menu as="div" className="relative ml-3">
-                            <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
-                                <span className="absolute -inset-1.5" />
-                                <span className="sr-only">Open user menu</span>
-                                <img
-                                    alt=""
-                                    src="profile-placeholder.svg"
-                                    className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                                />
-                            </MenuButton>
+                        {user && (
+                            <Menu as="div" className="relative ml-3">
+                                <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                                    <span className="absolute -inset-1.5" />
+                                    <span className="sr-only">Open user menu</span>
+                                    <img
+                                        alt=""
+                                        src="profile-placeholder.svg"
+                                        className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
+                                    />
+                                </MenuButton>
 
-                            <MenuItems
-                                transition
-                                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
-                            >
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                    >
-                                        Your profile
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                    >
-                                        Settings
-                                    </a>
-                                </MenuItem>
-                                <MenuItem>
-                                    <a
-                                        href="#"
-                                        className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                    >
-                                        Sign out
-                                    </a>
-                                </MenuItem>
-                            </MenuItems>
-                        </Menu>
+                                <MenuItems
+                                    transition
+                                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                                >
+                                    <MenuItem>
+                                        <a
+                                            href="#"
+                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                                        >
+                                            Your profile
+                                        </a>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <a
+                                            href="#"
+                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                                        >
+                                            Settings
+                                        </a>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="block w-full px-4 py-2 text-left text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
+                                        >
+                                            Sign out
+                                        </button>
+                                    </MenuItem>
+                                </MenuItems>
+                            </Menu>
+                        )}
+
                     </div>
                 </div>
             </div>
@@ -119,9 +174,9 @@ export default function Navbar() {
                             key={item.name}
                             as={Link}
                             to={item.href}
-                            aria-current={item.current ? 'page' : undefined}
+                            aria-current={item.name === currentPage ? 'page' : undefined}
                             className={classNames(
-                                item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                 'block rounded-md px-3 py-2 text-base font-medium',
                             )}
                         >
