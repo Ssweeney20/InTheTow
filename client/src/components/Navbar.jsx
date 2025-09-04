@@ -5,9 +5,9 @@ import { useLogout } from '../hooks/useLogout.js'
 import { useAuthContext } from '../hooks/useAuthContext.js'
 
 const navigation = [
-    { name: 'Home', href: '/', current: true },
+    { name: 'Home', href: '/', current: false },
     { name: 'Warehouses', href: '/warehouses', current: false },
-    { name: 'Reviews', href: '/reviews', current: false },
+    { name: 'My Reviews', href: '/reviews', current: false },
     { name: 'About', href: '#', current: false },
 ]
 
@@ -20,7 +20,11 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Navbar() {
+export default function Navbar(props) {
+    const currentPage = props.data
+
+    // set current page
+
     const { logout } = useLogout()
     const { user } = useAuthContext()
 
@@ -55,13 +59,13 @@ export default function Navbar() {
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
-                                (!(item.name === 'Reviews')) ? (
+                                (!(item.name === 'My Reviews')) ? (
                                     <Link
                                         key={item.name}
                                         to={item.href}
-                                        aria-current={item.current ? 'page' : undefined}
+                                        aria-current={item.name === currentPage ? 'page' : undefined}
                                         className={classNames(
-                                            item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                             'rounded-md px-3 py-2 text-sm font-medium',
                                         )}
                                     >
@@ -70,9 +74,9 @@ export default function Navbar() {
                                         <Link
                                         key={item.name}
                                         to={item.href}
-                                        aria-current={item.current ? 'page' : undefined}
+                                        aria-current={item.name === currentPage ? 'page' : undefined}
                                         className={classNames(
-                                            item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                             'rounded-md px-3 py-2 text-sm font-medium',
                                         )}
                                     >
@@ -92,7 +96,11 @@ export default function Navbar() {
                                 <Link
                                     key={item.name}
                                     to={item.href}
-                                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+                                    aria-current={item.name === currentPage ? 'page' : undefined}
+                                        className={classNames(
+                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                            'rounded-md px-3 py-2 text-sm font-medium',
+                                        )}
                                 >
                                     {item.name}
                                 </Link>
@@ -166,9 +174,9 @@ export default function Navbar() {
                             key={item.name}
                             as={Link}
                             to={item.href}
-                            aria-current={item.current ? 'page' : undefined}
+                            aria-current={item.name === currentPage ? 'page' : undefined}
                             className={classNames(
-                                item.current ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
                                 'block rounded-md px-3 py-2 text-base font-medium',
                             )}
                         >

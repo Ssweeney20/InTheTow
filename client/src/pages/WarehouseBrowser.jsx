@@ -62,7 +62,7 @@ const warehouseBrowser = () => {
 
     return (
         <main>
-            <Navbar />
+            <Navbar data = "Warehouses"/>
             <div className="pattern" />
 
             <div className="wrapper">

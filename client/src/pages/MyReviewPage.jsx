@@ -45,11 +45,11 @@ const MyReviewPage = () => {
 
     return (
         <>
-            <Navbar />
+            <Navbar data = "My Reviews"/>
             <div className="min-h-screen bg-white">
                 <div className="w-full px-4 pt-10 pb-16 sm:px-6 lg:px-8 lg:pt-16 lg:pb-24">
                     <div className="mt-10">
-                        <h2 className="text-sm font-medium text-gray-900">Reviews</h2>
+                        <h2 className="text-sm font-medium text-gray-900">My Reviews</h2>
                         <div className="mt-4 space-y-4">
                             {(reviews ?? []).length === 0 ? (
                                 <p className="text-sm text-gray-600">No reviews yet.</p>
