@@ -7,6 +7,10 @@ const ReviewSchema = new mongoose.Schema(
             required: true,
             ref: 'User'
         },
+        userDisplayName : {
+            type: String,
+            required: true,
+        },
         warehouse: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
