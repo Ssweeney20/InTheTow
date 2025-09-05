@@ -5,13 +5,16 @@ import { useSignup } from '../hooks/useSignup'
 export default function SignupPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [displayName, setDisplayName] = useState('')
     const { signup, error, isLoading } = useSignup()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        await signup(email, password)
+        await signup(email, password, confirmPassword, displayName,)
     }
+
 
     return (
         <>
@@ -56,14 +59,29 @@ export default function SignupPage() {
 
                         <div>
                             <div className="flex items-center justify-between">
+                                <label htmlFor="displayName" className="block text-sm/6 font-medium text-gray-100">
+                                    Display Name
+                                </label>
+                            </div>
+                            <div className="mt-2">
+                                <input
+                                    id="displayName"
+                                    name="displayName"
+                                    type="displayName"
+                                    required
+                                    onChange={(e) => {setDisplayName(e.target.value)}}
+                                    value={displayName}
+                                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                />
+                            </div>
+                            
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between">
                                 <label htmlFor="password" className="block text-sm/6 font-medium text-gray-100">
                                     Password
                                 </label>
-                                <div className="text-sm">
-                                    <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                                        Forgot password?
-                                    </a>
-                                </div>
                             </div>
                             <div className="mt-2">
                                 <input
@@ -77,6 +95,27 @@ export default function SignupPage() {
                                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                                 />
                             </div>
+
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="confirmPassword" className="block text-sm/6 font-medium text-gray-100">
+                                    Confirm Password
+                                </label>
+                            </div>
+                            <div className="mt-2">
+                                <input
+                                    id="password2"
+                                    name="confirmPassword"
+                                    type="password"
+                                    required
+                                    onChange={(e) => {setConfirmPassword(e.target.value)}}
+                                    value={confirmPassword}
+                                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
+                                />
+                            </div>
+
                         </div>
 
                         <div>
@@ -85,7 +124,7 @@ export default function SignupPage() {
                                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                                 disabled= {isLoading}
                             >
-                                Sign in
+                                Sign Up
                             </button>
                         </div>
                     </form>

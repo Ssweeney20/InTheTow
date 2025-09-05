@@ -1,12 +1,26 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const validator = require('validator')
+const { RegExpMatcher, TextCensor, englishDataset, englishRecommendedTransformers } = require('obscenity');
+
+const matcher = new RegExpMatcher({
+	...englishDataset.build(),
+	...englishRecommendedTransformers,
+});
 
 const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         require: true,
         unique: true
+    },
+    displayName: {
+       type: String, 
+       require: true,
+       maxLength: 20
+    },
+    companyName: {
+       type: String, 
     },
     hash: {
         type: String,
@@ -19,10 +33,10 @@ const UserSchema = new mongoose.Schema({
 
 })
 
-UserSchema.statics.signup = async function(email, password){
+UserSchema.statics.signup = async function(email, password, displayName){
 
     // validation
-    if (!email || !password){
+    if (!email || !password || !displayName){
         throw Error('All fields are required')
     }
     
@@ -32,6 +46,11 @@ UserSchema.statics.signup = async function(email, password){
 
     if (!validator.isStrongPassword(password)){
         throw Error('Password not strong enough')
+    }
+
+    // obscenity filter
+    if (matcher.hasMatch(displayName)) {
+	    throw Error('Please try another display name')
     }
     
     const exists = await this.findOne({email})
@@ -43,7 +62,7 @@ UserSchema.statics.signup = async function(email, password){
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({email, hash, salt})
+    const user = await this.create({email, hash, displayName})
 
     return user
 }

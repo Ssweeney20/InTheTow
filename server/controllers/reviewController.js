@@ -94,19 +94,20 @@ const createReview = async (req, res, next) => {
             }
         }
 
+        account = await User.findById(req.user)
+
         const review = await Review.create({
             rating, warehouse, reviewText, pictures, appointmentTime,
-            startTime, endTime, safety, overnightParking, hasLumper, user : req.user
+            startTime, endTime, safety, overnightParking, hasLumper, user : req.user, userDisplayName: account.displayName
         })
 
         // add review to user
-        account = await User.findById(req.user)
         if (!account){
              throw new Error('User not found')
         }
         account.reviews.addToSet(review._id)
         await account.save()
-
+        console.log(account)
 
         // add review to warehouse
         const wh = await Warehouse.findById(warehouse)

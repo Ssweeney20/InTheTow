@@ -22,10 +22,10 @@ const loginUser = async (req, res, next) => {
 }
 
 const signupUser = async (req, res, next) => {
-    const {email, password} = req.body
+    const {email, password, displayName} = req.body
 
     try{
-        const user = await User.signup(email, password)
+        const user = await User.signup(email, password, displayName)
 
         // create JWT
         const token = createToken(user._id)
@@ -37,5 +37,20 @@ const signupUser = async (req, res, next) => {
     }
 }
 
+const getUserByID = async (req, res, next) => {
 
-module.exports = {loginUser, signupUser}
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user) {
+            return res.status(404).json({ error: 'User ID Not found' })
+        }
+        res.json(user)
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
+
+
+module.exports = {loginUser, signupUser, getUserByID}

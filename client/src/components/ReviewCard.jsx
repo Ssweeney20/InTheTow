@@ -1,9 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { StarIcon } from '@heroicons/react/20/solid';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_OPTIONS = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+            }
+        };
 
 const ReviewCard = (props) => {
 
     const review = props.data;
+    const userName = review.userDisplayName || "Test"
 
     // Calculate Load Duration
     const durationMs = new Date(review.endTime) - new Date(review.startTime);
@@ -32,7 +41,7 @@ const ReviewCard = (props) => {
             </div>
             <div class="ml-6">
                 <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">{review.user}</span>
+                    <span class="text-gray-600 font-bold">{userName}</span>
                     <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
                 </p>
                 <div class="flex items-center mt-1">
