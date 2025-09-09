@@ -3,16 +3,17 @@ import { StarIcon } from '@heroicons/react/20/solid';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-            }
-        };
+    method: 'GET',
+    headers: {
+        accept: 'application/json',
+    }
+};
 
 const ReviewCard = (props) => {
 
     const review = props.data;
     const userName = review.userDisplayName || "Test"
+    const photos = review.photoURLs
 
     // Calculate Load Duration
     const durationMs = new Date(review.endTime) - new Date(review.startTime);
@@ -25,6 +26,8 @@ const ReviewCard = (props) => {
     // Negative indicates seen early, positive indicates seen late
     const actualSeenMs = new Date(review.startTime) - new Date(review.appointmentTime);
     const actualSeenMinutes = Math.round(actualSeenMs / 1000 / 60);
+
+
 
     return (
         <div class="flex items-start">
@@ -80,9 +83,10 @@ const ReviewCard = (props) => {
                     <div className="flex items-center px-4">
                         <span className="text-sm">Time Seen:</span>
                         <div className="flex items-center ml-2">
-                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time": actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
+                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time" : actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
                         </div>
                     </div>
+
 
                 </div>
                 <div class="mt-3">
@@ -104,6 +108,33 @@ const ReviewCard = (props) => {
                         </button>
                     </div>
                 </div>
+
+                {photos.length > 0 && (
+                    <div className="mt-4">
+                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                            {photos.slice(0, 8).map((url, i) => (
+                                <div
+                                    key={url + i}
+                                    className="aspect-square overflow-hidden rounded-lg ring-1 ring-black/5"
+                                >
+                                    <img
+                                        loading="lazy"
+                                        src={url}
+                                        alt={`Review photo ${i + 1}`}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        {photos.length > 8 && (
+                            <p className="mt-2 text-xs text-gray-500">
+                                Showing 8 of {photos.length} photos.
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

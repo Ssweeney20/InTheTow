@@ -25,7 +25,7 @@ const ReviewSchema = new mongoose.Schema(
         reviewText: {
             type: String,
         },
-        pictures: [String],
+        photos: [String],
         appointmentTime: Date,
 
         startTime: {

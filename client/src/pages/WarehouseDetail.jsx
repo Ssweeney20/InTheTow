@@ -408,12 +408,12 @@ export default function WarehouseDetail() {
 
                                         {/* Safety Rating */}
                                         <div>
-                                            <label htmlFor="safetyRating" className="block text-sm font-medium text-gray-700">
+                                            <label htmlFor="safety" className="block text-sm font-medium text-gray-700">
                                                 Safety Rating (1–5)
                                             </label>
                                             <input
-                                                id="safetyRating"
-                                                name="safetyRating"
+                                                id="safety"
+                                                name="safety"
                                                 type="number"
                                                 min="1"
                                                 max="5"
@@ -439,7 +439,7 @@ export default function WarehouseDetail() {
                                         {/* Photos */}
                                         <div>
                                             <label htmlFor="photos" className="block text-sm font-medium text-gray-700">
-                                                Photos (up to 5)
+                                                Photos (up to 4)
                                             </label>
 
                                             <input
@@ -456,7 +456,7 @@ export default function WarehouseDetail() {
                                             />
 
                                             <p className="mt-1 text-xs text-gray-500">
-                                                PNG/JPG/HEIC • up to 5 files • 8MB each
+                                                PNG/JPG/HEIC • up to 4 files • 8MB each
                                             </p>
                                         </div>
 
