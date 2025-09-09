@@ -85,34 +85,24 @@ export default function WarehouseDetail() {
             setSubmitError("");
 
             try {
-                const form = new FormData(e.currentTarget);
-                const payload = {
-                    warehouse: warehouse._id || warehouseID,
-                    rating: Number(form.get("rating")),
-                    safety: Number(form.get("safetyRating")),
-                    reviewText: String(form.get("text")).trim(),
-                    appointmentTime: form.get("appointmentTime")
-                        ? new Date(form.get("appointmentTime"))
-                        : null,
-                    startTime: form.get("startTime")
-                        ? new Date(form.get("startTime"))
-                        : null,
-                    endTime: form.get("endTime")
-                        ? new Date(form.get("endTime"))
-                        : null,
-                    hasLumper: form.has("hasLumper"),
-                    overnightParking: form.has("overnightParking"),
-                };
+
+                const fd = new FormData(e.currentTarget);
+
+                fd.set("warehouse", warehouse?._id || warehouseID);
+
+                // normalize booleans for checkboxes
+                fd.set("hasLumper", fd.get("hasLumper") ? "true" : "false");
+                fd.set("overnightParking", fd.get("overnightParking") ? "true" : "false");
 
                 const res = await fetch(`${API_BASE_URL}reviews/`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", accept: "application/json", "Authorization": `Bearer ${user.token}` },
-                    body: JSON.stringify(payload),
+                    headers: {"Authorization": `Bearer ${user.token}` },
+                    body: fd,
                 });
 
                 if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
 
-                // Optionally refresh the warehouse detail after posting:
+                // refresh the warehouse detail after posting:
                 await fetchWarehouse(warehouseID);
 
                 setIsReviewOpen(false);
@@ -132,7 +122,7 @@ export default function WarehouseDetail() {
 
     return (
         <>
-            <Navbar data = "Warehouses"/>
+            <Navbar data="Warehouses" />
 
             {isLoading ? (
                 <Spinner />
@@ -439,12 +429,37 @@ export default function WarehouseDetail() {
                                             </label>
                                             <textarea
                                                 id="text"
-                                                name="text"
+                                                name="reviewText"
                                                 rows={4}
                                                 placeholder="Share your experience: wait time, staff, dock tips, etc."
                                                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
                                             />
                                         </div>
+
+                                        {/* Photos */}
+                                        <div>
+                                            <label htmlFor="photos" className="block text-sm font-medium text-gray-700">
+                                                Photos (up to 5)
+                                            </label>
+
+                                            <input
+                                                id="photos"
+                                                name="photos"
+                                                type="file"
+                                                accept="image/*"
+                                                multiple
+                                                className="
+      mt-1 block w-full cursor-pointer rounded-md border border-gray-300 p-2 text-sm text-gray-700
+      file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:px-3 file:py-2 file:text-white
+      hover:file:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500
+    "
+                                            />
+
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                PNG/JPG/HEIC • up to 5 files • 8MB each
+                                            </p>
+                                        </div>
+
 
                                         {/* hasLumper */}
                                         <div>

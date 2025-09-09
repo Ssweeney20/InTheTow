@@ -27,7 +27,7 @@ const getReviewByID = async (req, res, next) => {
 
 const getReviewsByUser = async (req, res, next) => {
 
-    const userID  = req.user;
+    const userID = req.user;
 
     try {
         const exists = await User.exists({ _id: userID });
@@ -60,14 +60,24 @@ const getReviewsByWarehouse = async (req, res, next) => {
 }
 
 const createReview = async (req, res, next) => {
-
-    console.log('req.user in createReview:', req.user);
+    
+    // all values come in as strings
     try {
-        const {rating, warehouse, reviewText, pictures,
-            safety, overnightParking, hasLumper
+        let { rating, warehouse, reviewText,
+            safety, overnightParking, hasLumper,
+            startTime, endTime, appointmentTime
         } = req.body
 
-        let { startTime, endTime, appointmentTime } = req.body;
+        // convert strings to proper types (multi-part form data)
+        rating = rating ? Number(rating) : undefined;
+        safety = safety ? Number(safety) : undefined;
+
+        hasLumper = hasLumper === 'true' || hasLumper === 'on';
+        overnightParking = overnightParking === 'true' || overnightParking === 'on';
+
+        startTime = startTime ? new Date(startTime) : null;
+        endTime = endTime ? new Date(endTime) : null;
+        appointmentTime = appointmentTime ? new Date(appointmentTime) : null;
 
         if (!warehouse) {
             return res.status(400).json({ error: "Warehouse is required" })
@@ -97,13 +107,13 @@ const createReview = async (req, res, next) => {
         account = await User.findById(req.user)
 
         const review = await Review.create({
-            rating, warehouse, reviewText, pictures, appointmentTime,
-            startTime, endTime, safety, overnightParking, hasLumper, user : req.user, userDisplayName: account.displayName
+            rating, warehouse, reviewText, appointmentTime,
+            startTime, endTime, safety, overnightParking, hasLumper, user: req.user, userDisplayName: account.displayName
         })
 
         // add review to user
-        if (!account){
-             throw new Error('User not found')
+        if (!account) {
+            throw new Error('User not found')
         }
         account.reviews.addToSet(review._id)
         await account.save()
@@ -116,20 +126,20 @@ const createReview = async (req, res, next) => {
             await Review.findByIdAndDelete(review._id);
             return res.status(404).json({ error: 'Warehouse not found' })
         }
-        
+
         // update warehouse lumper status
-        if (hasLumper == true){
+        if (hasLumper == true) {
             wh.hasLumper = true
         }
-        if (hasLumper == false){
+        if (hasLumper == false) {
             wh.hasLumper = false
         }
 
         // update warehouse overnight parking status
-        if (overnightParking == true){
+        if (overnightParking == true) {
             wh.overnightParking = true
         }
-        if (overnightParking == false){
+        if (overnightParking == false) {
             wh.overnightParking = false
         }
 
@@ -138,7 +148,7 @@ const createReview = async (req, res, next) => {
         const newAvg = (wh.avgRating * wh.numRatings + rating) / newCount
 
         // update safety rating
-        if (safety){
+        if (safety) {
             const newSafeCount = wh.numSafetyReports + 1
             const newSafetyScore = (wh.safetyScore * wh.numSafetyReports + safety) / newSafeCount
             wh.numSafetyReports = newSafeCount;
@@ -158,7 +168,7 @@ const createReview = async (req, res, next) => {
         }
 
         // update on time percentage
-        if (appointmentTime && startTime){
+        if (appointmentTime && startTime) {
             const newNumAppts = wh.numAppointmentsReported + 1
             const wasOnTime = startTime <= appointmentTime ? 1 : 0
             const newOnTimeCount = wh.appointmentsOnTimeCount + wasOnTime
@@ -174,12 +184,13 @@ const createReview = async (req, res, next) => {
         wh.avgRating = newAvg
         wh.numTimeReports = newTimeReports
         wh.avgTimeAtDock = newAvgTime
-        
+
         await wh.save()
 
         res.status(201).json(review)
     }
     catch (err) {
+        console.error('createReview error:', err);
         next(err)
     }
 }
