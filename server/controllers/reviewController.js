@@ -288,6 +288,8 @@ const createReview = async (req, res, next) => {
 
         wh.reviews = wh.reviews || []
         wh.reviews.push(review._id)
+        wh.photos = wh.photos || []
+        wh.photos.push(...photos)
         wh.numRatings = newCount
         wh.avgRating = newAvg
         wh.numTimeReports = newTimeReports

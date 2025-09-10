@@ -42,6 +42,7 @@ const WarehouseSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Review'
         }],
+        photos: [String],
         avgRating: {
             type: Number,
             default : 0

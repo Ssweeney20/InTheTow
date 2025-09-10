@@ -96,7 +96,7 @@ export default function WarehouseDetail() {
 
                 const res = await fetch(`${API_BASE_URL}reviews/`, {
                     method: "POST",
-                    headers: {"Authorization": `Bearer ${user.token}` },
+                    headers: { "Authorization": `Bearer ${user.token}` },
                     body: fd,
                 });
 
@@ -120,6 +120,9 @@ export default function WarehouseDetail() {
         fetchWarehouse(warehouseID);
     }, [warehouseID]);
 
+    const photos = warehouse?.photoURLs ?? [];
+    const placeholder = "/placeholder-image.jpg";
+
     return (
         <>
             <Navbar data="Warehouses" />
@@ -133,34 +136,36 @@ export default function WarehouseDetail() {
             ) : (
                 <div className="bg-white">
                     <div className="pt-6">
-                        {/* Image gallery (uses proxy or a placeholder) */}
-                        <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-8 lg:px-8">
+                        {/* Image gallery  */}
+                        <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-8 lg:px-8
+                max-h-[60vh] overflow-hidden">
                             {/* Tall left */}
                             <img
                                 alt={`${warehouse.name} photo`}
-                                src={`/api/place-photo/${warehouse.googlePlaceId}`}
+                                src={photos[1] || placeholder}
                                 onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="row-span-2 aspect-3/4 size-full rounded-lg object-cover max-lg:hidden"
+                                className="row-span-2 aspect-3/4 size-full rounded-lg object-cover max-lg:hidden max-h-[60vh] object-contain"
                             />
                             {/* Two stacked on right */}
                             <img
                                 alt={`${warehouse.name} photo`}
-                                src={`/api/place-photo/${warehouse.googlePlaceId}?v=2`}
+                                src={photos[2] || placeholder}
                                 onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="col-start-2 aspect-3/2 size-full rounded-lg object-cover max-lg:hidden"
+                                className="col-start-2 aspect-3/2 size-full rounded-lg object-cover max-lg:hidden max-h-[60vh] object-contain"
                             />
                             <img
                                 alt={`${warehouse.name} photo`}
-                                src={`/api/place-photo/${warehouse.googlePlaceId}?v=3`}
+                                src={photos[3] || placeholder}
                                 onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="col-start-2 row-start-2 aspect-3/2 size-full rounded-lg object-cover max-lg:hidden"
+                                
+                                className="col-start-2 row-start-2 aspect-3/2 size-full rounded-lg object-cover max-lg:hidden max-h-[60vh] object-contain"
                             />
                             {/* Mobile/primary */}
                             <img
                                 alt={`${warehouse.name} photo`}
-                                src={`/api/place-photo/${warehouse.googlePlaceId}?v=4`}
+                                src={photos[0] || placeholder}
                                 onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="row-span-2 aspect-4/5 size-full object-cover sm:rounded-lg lg:aspect-3/4"
+                                className="row-span-2 aspect-4/5 size-full object-cover sm:rounded-lg lg:aspect-3/4 max-h-[60vh] object-contain"
                             />
                         </div>
 
