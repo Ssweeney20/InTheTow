@@ -59,31 +59,31 @@ export default function Navbar(props) {
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
-                                (!(item.name === 'My Reviews')) ? (
-                                    <Link
-                                        key={item.name}
-                                        to={item.href}
-                                        aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
-                                    >
-                                        {item.name}
-                                    </Link>) : ((user && (
+                                    (!(item.name === 'My Reviews')) ? (
                                         <Link
-                                        key={item.name}
-                                        to={item.href}
-                                        aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
-                                    >
-                                        {item.name}
-                                    </Link>)
-                                    ))
-                                    )
+                                            key={item.name}
+                                            to={item.href}
+                                            aria-current={item.name === currentPage ? 'page' : undefined}
+                                            className={classNames(
+                                                item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                                'rounded-md px-3 py-2 text-sm font-medium',
+                                            )}
+                                        >
+                                            {item.name}
+                                        </Link>) : ((user && (
+                                            <Link
+                                                key={item.name}
+                                                to={item.href}
+                                                aria-current={item.name === currentPage ? 'page' : undefined}
+                                                className={classNames(
+                                                    item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                                    'rounded-md px-3 py-2 text-sm font-medium',
+                                                )}
+                                            >
+                                                {item.name}
+                                            </Link>)
+                                        ))
+                                )
                                 )}
                             </div>
                         </div>
@@ -97,10 +97,10 @@ export default function Navbar(props) {
                                     key={item.name}
                                     to={item.href}
                                     aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
+                                    className={classNames(
+                                        item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                        'rounded-md px-3 py-2 text-sm font-medium',
+                                    )}
                                 >
                                     {item.name}
                                 </Link>
@@ -135,21 +135,12 @@ export default function Navbar(props) {
                                     transition
                                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                                 >
-                                    <MenuItem>
-                                        <a
-                                            href="#"
-                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                        >
-                                            Your profile
-                                        </a>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <a
-                                            href="#"
-                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                        >
-                                            Settings
-                                        </a>
+                                    <MenuItem
+                                        as={Link}
+                                        to="/profile"
+                                        className="block px-4 py-2 text-sm text-gray-300 data-[focus]:bg-white/5 data-[focus]:outline-hidden"
+                                    >
+                                        Your profile
                                     </MenuItem>
                                     <MenuItem>
                                         <button

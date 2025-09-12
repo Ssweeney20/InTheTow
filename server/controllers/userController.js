@@ -51,6 +51,22 @@ const getUserByID = async (req, res, next) => {
     }
 }
 
+const getCurrentUser = async (req, res, next) => {
+
+    const userID = req.user;
+
+    try {
+        const user = await User.findById(userID)
+        if (!user) {
+            return res.status(404).json({ error: 'User ID Not found' })
+        }
+        res.json(user)
+    }
+    catch (err) {
+        next(err)
+    }
+}
 
 
-module.exports = {loginUser, signupUser, getUserByID}
+
+module.exports = {loginUser, signupUser, getUserByID, getCurrentUser}

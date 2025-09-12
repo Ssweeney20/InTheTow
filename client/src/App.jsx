@@ -8,6 +8,7 @@ import WarehouseDetail from './pages/WarehouseDetail';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import MyReviewPage from './pages/MyReviewPage';
+import ProfileSettingsPage from './pages/ProfileSettingsPage'
 
 function App() {
   const { user } = useAuthContext()
@@ -21,6 +22,7 @@ function App() {
             <Route path="/login" element={!user ? <LoginPage/> : <Navigate to="/"/>}/>
             <Route path="/signup" element={!user ? <SignupPage/> : <Navigate to="/"/> }/>
             <Route path="/reviews" element={user ? <MyReviewPage/> : <Navigate to="/"/> }/>
+            <Route path="/profile" element={user ? <ProfileSettingsPage/> : <Navigate to="/"/> }/>
         </Routes> 
     </Router>    
   )
