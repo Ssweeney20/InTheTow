@@ -8,6 +8,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function AccountSettingsPage() {
     const { user } = useAuthContext()
     const [profile, setProfile] = useState(null)
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
     const fetchUser = async () => {
 
@@ -41,6 +43,35 @@ export default function AccountSettingsPage() {
     }, [user?.token])
 
 
+    async function uploadPhotos(e) {
+        e.preventDefault();
+
+        if (user) {
+            setSubmitting(true);
+            setSubmitError("");
+
+            try {
+
+                const fd = new FormData(e.currentTarget);
+
+                const res = await fetch(`${API_BASE_URL}user/profile-photo`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${user.token}` },
+                    body: fd,
+                });
+
+                if (!res.ok) throw new Error(`Failed to upload profile picture (${res.status})`);
+
+            } catch (err) {
+                console.error(err);
+                setSubmitError("Could not upload photo. Please try again.");
+            } finally {
+                setSubmitting(false);
+                window.location.reload();
+            }
+        }
+    }
+
     console.log(profile)
 
     return (
@@ -62,6 +93,7 @@ export default function AccountSettingsPage() {
                                     <h2 className="mb-6 text-xl font-semibold text-gray-900">{profile.displayName}</h2>
 
                                     {/* Avatar row */}
+
                                     <div className="mb-6">
                                         <label className="mb-2 block text-sm font-medium text-gray-900">
                                             Avatar
@@ -69,35 +101,34 @@ export default function AccountSettingsPage() {
                                         <div className="flex flex-wrap items-center gap-4">
                                             <img
                                                 className="h-16 w-16 rounded-full object-cover"
-                                                src={profile.profilePicture || "profile-placeholder.svg"}
+                                                src={profile.photoURL || "profile-placeholder.svg"}
                                                 alt="Current avatar"
                                             />
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-                                            >
-                                                {/* Upload icon */}
-                                                <svg
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    className="h-4 w-4"
-                                                    aria-hidden="true"
+                                            <form onSubmit={uploadPhotos} className="flex-1 overflow-y-auto p-5 space-y-4">
+                                                <input
+                                                    id="photo"
+                                                    name="photo"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="
+      mt-1 block w-full cursor-pointer rounded-md border border-gray-300 p-2 text-sm text-gray-700
+      file:mr-4 file:rounded-md file:border-0 file:bg-indigo-600 file:px-3 file:py-2 file:text-white
+      hover:file:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500
+    "
+                                                />
+                                                <p className="basis-full text-sm text-gray-500">
+                                                    For best results, upload an image 512×512 or larger.
+                                                </p>
+                                                <button
+                                                    type="submit"
+                                                    className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none"
                                                 >
-                                                    <path d="M12 5v10M8.5 8.5L12 5l3.5 3.5" />
-                                                    <path d="M4 20h16" />
-                                                </svg>
-                                                Upload
-                                            </button>
-                                            <p className="basis-full text-sm text-gray-500">
-                                                For best results, upload an image 512×512 or larger.
-                                            </p>
+                                                    Upload
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
+
 
                                     {/* Name fields */}
                                     <div className="mb-6 grid gap-4 md:grid-cols-2">
