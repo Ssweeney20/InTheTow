@@ -1,8 +1,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout.js'
 import { useAuthContext } from '../hooks/useAuthContext.js'
+import { useState, useEffect } from 'react'
 
 const navigation = [
     { name: 'Home', href: '/', current: false },
@@ -16,6 +17,8 @@ const authNavigation = [
     { name: 'Sign Up', href: '/signup', current: false },
 ]
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -27,10 +30,42 @@ export default function Navbar(props) {
 
     const { logout } = useLogout()
     const { user } = useAuthContext()
+    const [profile, setProfile] = useState(null)
 
     const handleLogout = () => {
         logout()
     }
+
+    const fetchUser = async () => {
+
+        const API_OPTIONS = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                "Authorization": `Bearer ${user.token}`
+            }
+        }
+
+        try {
+            const endpoint = `${API_BASE_URL}user/`;
+
+            const response = await fetch(endpoint, API_OPTIONS);
+            if (!response.ok) {
+                throw new Error("Failed to fetch user")
+            }
+
+            const data = await response.json();
+
+            setProfile(data || {});
+
+        } catch (error) {
+            console.error(`error fetching user: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+    }, [user?.token])
 
     return (
         <Disclosure
@@ -124,11 +159,19 @@ export default function Navbar(props) {
                                 <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">Open user menu</span>
-                                    <img
-                                        alt=""
-                                        src="profile-placeholder.svg"
-                                        className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                                    />
+                                    {profile?.photoURL ? (
+                                        <img
+                                            className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
+                                            src={profile.photoURL}
+                                            alt="Profile picture"
+                                        />
+                                    ) : (
+                                        <img
+                                            className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
+                                            src="/profile-placeholder.svg"
+                                            alt="Default profile"
+                                        />
+                                    )}
                                 </MenuButton>
 
                                 <MenuItems

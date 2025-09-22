@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar"
 const HomePage = () => {
   return (
     <main>
-        <Navbar data = "Home"/>
         <div className="pattern" aria-hidden />
         <div className="wrapper">
             <h1>Home Page</h1>

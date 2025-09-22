@@ -1,5 +1,6 @@
 import React from 'react'
 import { StarIcon } from '@heroicons/react/20/solid';
+import { useState, useEffect } from 'react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -12,8 +13,8 @@ const API_OPTIONS = {
 const ReviewCard = (props) => {
 
     const review = props.data;
-    const userName = review.userDisplayName || "Test"
     const photos = review.photoURLs
+    const userID = review.user
 
     // Calculate Load Duration
     const durationMs = new Date(review.endTime) - new Date(review.startTime);
@@ -27,6 +28,39 @@ const ReviewCard = (props) => {
     const actualSeenMs = new Date(review.startTime) - new Date(review.appointmentTime);
     const actualSeenMinutes = Math.round(actualSeenMs / 1000 / 60);
 
+    const [user, setUser] = useState(null)
+
+    const fetchUser = async () => {
+
+        const API_OPTIONS = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json'
+            }
+        }
+
+        try {
+            const endpoint = `${API_BASE_URL}user/${userID}`;
+
+            const response = await fetch(endpoint, API_OPTIONS);
+            if (!response.ok) {
+                throw new Error("Failed to fetch user")
+            }
+
+            const data = await response.json();
+
+            setUser(data || {});
+
+        } catch (error) {
+            console.error(`error fetching user: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+    }, [userID])
+
+    const displayName = user?.displayName ?? review.userDisplayName ?? "Test";
 
 
     return (
@@ -34,7 +68,19 @@ const ReviewCard = (props) => {
             <div class="flex-shrink-0">
                 <div class="inline-block relative">
                     <div class="relative w-16 h-16 rounded-full overflow-hidden">
-                        <img class="absolute top-0 left-0 w-full h-full bg-cover object-fit object-cover" src="profile-placeholder.svg" alt="Profile picture" />
+                        {user?.photoURL ? (
+                            <img
+                                className="absolute top-0 left-0 w-full h-full object-cover"
+                                src={user.photoURL}
+                                alt="Profile picture"
+                            />
+                        ) : (
+                            <img
+                                className="absolute top-0 left-0 w-full h-full object-cover"
+                                src="/profile-placeholder.svg"
+                                alt="Default profile"
+                            />
+                        )}
                         <div class="absolute top-0 left-0 w-full h-full rounded-full shadow-inner"></div>
                     </div>
                     <svg class="fill-current text-white bg-green-600 rounded-full p-1 absolute bottom-0 right-0 w-6 h-6 -mx-1 -my-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -44,7 +90,7 @@ const ReviewCard = (props) => {
             </div>
             <div class="ml-6">
                 <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">{userName}</span>
+                    <span class="text-gray-600 font-bold">{displayName}</span>
                     <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
                 </p>
                 <div class="flex items-center mt-1">

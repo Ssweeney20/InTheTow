@@ -125,7 +125,6 @@ export default function WarehouseDetail() {
 
     return (
         <>
-            <Navbar data="Warehouses" />
 
             {isLoading ? (
                 <Spinner />

@@ -76,7 +76,6 @@ export default function AccountSettingsPage() {
 
     return (
         <>
-            <Navbar />
             <main className="min-h-screen w-full bg-white">
                 <div className="mx-auto max-w-3xl px-6 py-2">
                     {!profile ? (

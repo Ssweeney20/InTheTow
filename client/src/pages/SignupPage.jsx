@@ -26,7 +26,6 @@ export default function SignupPage() {
         <body class="h-full">
         ```
       */}
-            <Navbar data = "Sign Up"/>
             <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
