@@ -16,14 +16,15 @@ const WarehouseCard = ({ warehouse }) => {
         appointmentsOnTimePercentage,
         numRatings,
         googlePlaceId,
+        photoURLs,
     } = warehouse;
 
+    const topPhoto = photoURLs?.[0]
     
-
     return (
         
         <div className='warehouse-card'>
-            <img src='placeholder-image.jpg'/>
+            <img src={topPhoto ? topPhoto : "placeholder-image.jpg"} className="w-64 h-64 object-cover rounded-md"/>
 
             <div className='mt-4'>
                 <h3>{name}</h3>

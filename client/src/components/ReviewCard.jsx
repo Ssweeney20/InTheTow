@@ -1,18 +1,20 @@
 import React from 'react'
 import { StarIcon } from '@heroicons/react/20/solid';
+import { useState, useEffect } from 'react';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
-            method: 'GET',
-            headers: {
-                accept: 'application/json',
-            }
-        };
+    method: 'GET',
+    headers: {
+        accept: 'application/json',
+    }
+};
 
 const ReviewCard = (props) => {
 
     const review = props.data;
-    const userName = review.userDisplayName || "Test"
+    const photos = review.photoURLs
+    const userID = review.user
 
     // Calculate Load Duration
     const durationMs = new Date(review.endTime) - new Date(review.startTime);
@@ -26,12 +28,59 @@ const ReviewCard = (props) => {
     const actualSeenMs = new Date(review.startTime) - new Date(review.appointmentTime);
     const actualSeenMinutes = Math.round(actualSeenMs / 1000 / 60);
 
+    const [user, setUser] = useState(null)
+
+    const fetchUser = async () => {
+
+        const API_OPTIONS = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json'
+            }
+        }
+
+        try {
+            const endpoint = `${API_BASE_URL}user/${userID}`;
+
+            const response = await fetch(endpoint, API_OPTIONS);
+            if (!response.ok) {
+                throw new Error("Failed to fetch user")
+            }
+
+            const data = await response.json();
+
+            setUser(data || {});
+
+        } catch (error) {
+            console.error(`error fetching user: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+    }, [userID])
+
+    const displayName = user?.displayName ?? review.userDisplayName ?? "Test";
+
+
     return (
         <div class="flex items-start">
             <div class="flex-shrink-0">
                 <div class="inline-block relative">
                     <div class="relative w-16 h-16 rounded-full overflow-hidden">
-                        <img class="absolute top-0 left-0 w-full h-full bg-cover object-fit object-cover" src="profile-placeholder.svg" alt="Profile picture" />
+                        {user?.photoURL ? (
+                            <img
+                                className="absolute top-0 left-0 w-full h-full object-cover"
+                                src={user.photoURL}
+                                alt="Profile picture"
+                            />
+                        ) : (
+                            <img
+                                className="absolute top-0 left-0 w-full h-full object-cover"
+                                src="/profile-placeholder.svg"
+                                alt="Default profile"
+                            />
+                        )}
                         <div class="absolute top-0 left-0 w-full h-full rounded-full shadow-inner"></div>
                     </div>
                     <svg class="fill-current text-white bg-green-600 rounded-full p-1 absolute bottom-0 right-0 w-6 h-6 -mx-1 -my-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -41,7 +90,7 @@ const ReviewCard = (props) => {
             </div>
             <div class="ml-6">
                 <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">{userName}</span>
+                    <span class="text-gray-600 font-bold">{displayName}</span>
                     <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
                 </p>
                 <div class="flex items-center mt-1">
@@ -80,9 +129,10 @@ const ReviewCard = (props) => {
                     <div className="flex items-center px-4">
                         <span className="text-sm">Time Seen:</span>
                         <div className="flex items-center ml-2">
-                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time": actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
+                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time" : actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
                         </div>
                     </div>
+
 
                 </div>
                 <div class="mt-3">
@@ -104,6 +154,33 @@ const ReviewCard = (props) => {
                         </button>
                     </div>
                 </div>
+
+                {photos.length > 0 && (
+                    <div className="mt-4">
+                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                            {photos.slice(0, 8).map((url, i) => (
+                                <div
+                                    key={url + i}
+                                    className="aspect-square overflow-hidden rounded-lg ring-1 ring-black/5"
+                                >
+                                    <img
+                                        loading="lazy"
+                                        src={url}
+                                        alt={`Review photo ${i + 1}`}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => (e.currentTarget.style.display = 'none')}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+
+                        {photos.length > 8 && (
+                            <p className="mt-2 text-xs text-gray-500">
+                                Showing 8 of {photos.length} photos.
+                            </p>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )

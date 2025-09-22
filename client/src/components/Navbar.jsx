@@ -1,8 +1,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout.js'
 import { useAuthContext } from '../hooks/useAuthContext.js'
+import { useState, useEffect } from 'react'
 
 const navigation = [
     { name: 'Home', href: '/', current: false },
@@ -16,6 +17,8 @@ const authNavigation = [
     { name: 'Sign Up', href: '/signup', current: false },
 ]
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -27,10 +30,42 @@ export default function Navbar(props) {
 
     const { logout } = useLogout()
     const { user } = useAuthContext()
+    const [profile, setProfile] = useState(null)
 
     const handleLogout = () => {
         logout()
     }
+
+    const fetchUser = async () => {
+
+        const API_OPTIONS = {
+            method: 'GET',
+            headers: {
+                accept: 'application/json',
+                "Authorization": `Bearer ${user.token}`
+            }
+        }
+
+        try {
+            const endpoint = `${API_BASE_URL}user/`;
+
+            const response = await fetch(endpoint, API_OPTIONS);
+            if (!response.ok) {
+                throw new Error("Failed to fetch user")
+            }
+
+            const data = await response.json();
+
+            setProfile(data || {});
+
+        } catch (error) {
+            console.error(`error fetching user: ${error}`);
+        }
+    }
+
+    useEffect(() => {
+        fetchUser()
+    }, [user?.token])
 
     return (
         <Disclosure
@@ -59,31 +94,31 @@ export default function Navbar(props) {
                         <div className="hidden sm:ml-6 sm:block">
                             <div className="flex space-x-4">
                                 {navigation.map((item) => (
-                                (!(item.name === 'My Reviews')) ? (
-                                    <Link
-                                        key={item.name}
-                                        to={item.href}
-                                        aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
-                                    >
-                                        {item.name}
-                                    </Link>) : ((user && (
+                                    (!(item.name === 'My Reviews')) ? (
                                         <Link
-                                        key={item.name}
-                                        to={item.href}
-                                        aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
-                                    >
-                                        {item.name}
-                                    </Link>)
-                                    ))
-                                    )
+                                            key={item.name}
+                                            to={item.href}
+                                            aria-current={item.name === currentPage ? 'page' : undefined}
+                                            className={classNames(
+                                                item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                                'rounded-md px-3 py-2 text-sm font-medium',
+                                            )}
+                                        >
+                                            {item.name}
+                                        </Link>) : ((user && (
+                                            <Link
+                                                key={item.name}
+                                                to={item.href}
+                                                aria-current={item.name === currentPage ? 'page' : undefined}
+                                                className={classNames(
+                                                    item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                                    'rounded-md px-3 py-2 text-sm font-medium',
+                                                )}
+                                            >
+                                                {item.name}
+                                            </Link>)
+                                        ))
+                                )
                                 )}
                             </div>
                         </div>
@@ -97,10 +132,10 @@ export default function Navbar(props) {
                                     key={item.name}
                                     to={item.href}
                                     aria-current={item.name === currentPage ? 'page' : undefined}
-                                        className={classNames(
-                                            item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
-                                            'rounded-md px-3 py-2 text-sm font-medium',
-                                        )}
+                                    className={classNames(
+                                        item.name === currentPage ? 'bg-gray-950/50 text-white' : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                                        'rounded-md px-3 py-2 text-sm font-medium',
+                                    )}
                                 >
                                     {item.name}
                                 </Link>
@@ -124,32 +159,31 @@ export default function Navbar(props) {
                                 <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                                     <span className="absolute -inset-1.5" />
                                     <span className="sr-only">Open user menu</span>
-                                    <img
-                                        alt=""
-                                        src="profile-placeholder.svg"
-                                        className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
-                                    />
+                                    {profile?.photoURL ? (
+                                        <img
+                                            className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
+                                            src={profile.photoURL}
+                                            alt="Profile picture"
+                                        />
+                                    ) : (
+                                        <img
+                                            className="size-8 rounded-full bg-gray-800 outline -outline-offset-1 outline-white/10"
+                                            src="/profile-placeholder.svg"
+                                            alt="Default profile"
+                                        />
+                                    )}
                                 </MenuButton>
 
                                 <MenuItems
                                     transition
                                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-gray-800 py-1 outline -outline-offset-1 outline-white/10 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                                 >
-                                    <MenuItem>
-                                        <a
-                                            href="#"
-                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                        >
-                                            Your profile
-                                        </a>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <a
-                                            href="#"
-                                            className="block px-4 py-2 text-sm text-gray-300 data-focus:bg-white/5 data-focus:outline-hidden"
-                                        >
-                                            Settings
-                                        </a>
+                                    <MenuItem
+                                        as={Link}
+                                        to="/profile"
+                                        className="block px-4 py-2 text-sm text-gray-300 data-[focus]:bg-white/5 data-[focus]:outline-hidden"
+                                    >
+                                        Your profile
                                     </MenuItem>
                                     <MenuItem>
                                         <button
