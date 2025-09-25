@@ -241,29 +241,7 @@ export default function AccountSettingsPage() {
                                     </button>
                                 </section>
 
-                                {/* Divider */}
-                                <hr className="my-12 border-gray-200" />
-
-                                {/* Danger Zone */}
-                                <section className="mb-24">
-                                    <h2 className="mb-6 text-xl font-semibold text-gray-900">Danger zone</h2>
-                                    <div className="rounded-xl border border-red-200 bg-red-50 p-4">
-                                        <div className="flex flex-wrap items-center justify-between gap-3">
-                                            <div>
-                                                <h3 className="text-sm font-semibold text-red-900">Delete account</h3>
-                                                <p className="mt-1 text-sm text-red-700">
-                                                    Permanently remove your account. This action is not reversible.
-                                                </p>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-lg border border-red-300 bg-transparent px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-                                            >
-                                                Delete account
-                                            </button>
-                                        </div>
-                                    </div>
-                                </section>
+                
                             </>
                         )}
                 </div>
