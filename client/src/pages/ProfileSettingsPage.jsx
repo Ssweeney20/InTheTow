@@ -8,8 +8,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export default function AccountSettingsPage() {
     const { user } = useAuthContext()
     const [profile, setProfile] = useState(null)
+    const [displayNameEntry, setDisplayNameEntry] = useState('')
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
+
+    console.log(displayNameEntry)
 
     const fetchUser = async () => {
 
@@ -72,7 +75,41 @@ export default function AccountSettingsPage() {
         }
     }
 
-    console.log(profile)
+    async function changeDisplayName() {
+
+        if (!displayNameEntry) {
+            setSubmitError("Please enter a display name");
+            return
+        }
+        if (user) {
+            setSubmitting(true);
+            setSubmitError("");
+
+            try {
+                const res = await fetch(`${API_BASE_URL}user/display-name`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${user.token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        displayName: displayNameEntry
+                    })
+                });
+
+                if (!res.ok) throw new Error(`Failed to change display name (${res.status})`);
+                
+                await fetchUser()
+
+            } catch (err) {
+                console.error(err);
+                setSubmitError("Could not change display name. Please try again.");
+            } finally {
+                setSubmitting(false);
+                setDisplayNameEntry("");
+            }
+        }
+    }
 
     return (
         <>
@@ -134,9 +171,18 @@ export default function AccountSettingsPage() {
                                         <label className="flex flex-col gap-1">
                                             <span className="text-sm font-medium text-gray-900">Display name</span>
                                             <input
-                                                placeholder="Josef"
+                                                value={displayNameEntry}
+                                                placeholder={profile.displayName}
+                                                onChange={(e) => { setDisplayNameEntry(e.target.value) }}
                                                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
                                             />
+                                            <button
+                                                onClick={changeDisplayName}
+                                                type="submit"
+                                                className="rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none"
+                                            >
+                                                Change Name
+                                            </button>
                                         </label>
                                     </div>
 

@@ -163,6 +163,28 @@ const uploadProfilePic = async (req, res, next) => {
     }
 }
 
+const changeDisplayName = async (req, res, next) => {
+
+    const userID = req.user;
+    const { displayName } = req.body;
+
+    try {
+
+        const user = await User.findById(userID)
+        if (!user) {
+            return res.status(404).json({ error: 'User ID Not found' })
+        }
+
+        user.displayName = displayName;
+        await user.save()
+
+        res.json(user)
+    }
+    catch (err) {
+        next(err)
+    }
+}
 
 
-module.exports = { loginUser, signupUser, getUserByID, getCurrentUser, uploadProfilePic }
+
+module.exports = { loginUser, signupUser, getUserByID, getCurrentUser, uploadProfilePic, changeDisplayName }
