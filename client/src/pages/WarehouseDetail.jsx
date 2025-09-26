@@ -1,18 +1,17 @@
-import { StarIcon } from '@heroicons/react/20/solid'
-import Navbar from '../components/Navbar'
+import { WarehouseImageGallery } from '../components/ImageGallery'
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import Spinner from '../components/Spinner';
 import ReviewCard from '../components/ReviewCard';
 import { useAuthContext } from '../hooks/useAuthContext';
-import { 
-    Star, 
-    Clock, 
-    Shield, 
-    CheckCircle, 
-    MapPin, 
-    Phone, 
-    ExternalLink, 
+import {
+    Star,
+    Clock,
+    Shield,
+    CheckCircle,
+    MapPin,
+    Phone,
+    ExternalLink,
     Plus,
     X,
     Calendar,
@@ -177,35 +176,7 @@ export default function WarehouseDetail() {
 
                     <div className="pt-6">
                         {/* Image gallery */}
-                        <div className="mx-auto mt-6 max-w-2xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:gap-8 lg:px-8 max-h-[60vh] overflow-hidden">
-                            {/* Tall left */}
-                            <img
-                                alt={`${warehouse.name} photo`}
-                                src={photos[1] || placeholder}
-                                onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="row-span-2 aspect-3/4 size-full rounded-xl object-cover max-lg:hidden max-h-[60vh] shadow-lg"
-                            />
-                            {/* Two stacked on right */}
-                            <img
-                                alt={`${warehouse.name} photo`}
-                                src={photos[2] || placeholder}
-                                onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="col-start-2 aspect-3/2 size-full rounded-xl object-cover max-lg:hidden max-h-[60vh] shadow-lg"
-                            />
-                            <img
-                                alt={`${warehouse.name} photo`}
-                                src={photos[3] || placeholder}
-                                onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="col-start-2 row-start-2 aspect-3/2 size-full rounded-xl object-cover max-lg:hidden max-h-[60vh] shadow-lg"
-                            />
-                            {/* Mobile/primary */}
-                            <img
-                                alt={`${warehouse.name} photo`}
-                                src={photos[0] || placeholder}
-                                onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
-                                className="row-span-2 aspect-4/5 size-full object-cover sm:rounded-xl lg:aspect-3/4 max-h-[60vh] shadow-lg"
-                            />
-                        </div>
+                        <WarehouseImageGallery photos={photos} warehouseName={warehouse.name} />
 
                         {/* Info grid */}
                         <div className="mx-auto max-w-2xl px-4 pt-10 pb-16 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] lg:gap-x-8 lg:px-8 lg:pt-16 lg:pb-24">
@@ -260,8 +231,8 @@ export default function WarehouseDetail() {
                                                     <Star
                                                         key={i}
                                                         className={`h-5 w-5 ${(Number(warehouse.avgRating) || 0) > i
-                                                                ? "text-yellow-500 fill-current"
-                                                                : "text-gray-300"
+                                                            ? "text-yellow-500 fill-current"
+                                                            : "text-gray-300"
                                                             }`}
                                                     />
                                                 ))}
@@ -297,8 +268,8 @@ export default function WarehouseDetail() {
                                                     <Star
                                                         key={i}
                                                         className={`h-5 w-5 ${(warehouse.safetyScore || 0) > i
-                                                                ? "text-green-500 fill-current"
-                                                                : "text-gray-300"
+                                                            ? "text-green-500 fill-current"
+                                                            : "text-gray-300"
                                                             }`}
                                                     />
                                                 ))}
@@ -314,7 +285,7 @@ export default function WarehouseDetail() {
                                                 <div className="text-sm font-medium text-purple-900">On-Time Appointments</div>
                                             </div>
                                             <div className="text-2xl font-bold text-purple-900">
-                                                {warehouse.appointmentsOnTimePercentage != null
+                                                {reviews.length > 0
                                                     ? `${Math.round(warehouse.appointmentsOnTimePercentage)}%`
                                                     : "—"}
                                             </div>
@@ -519,6 +490,12 @@ export default function WarehouseDetail() {
                                                 type="file"
                                                 accept="image/*"
                                                 multiple
+                                                onChange={(e) => {
+                                                    if (e.target.files.length > 4) {
+                                                        alert("You can only upload up to 4 photos.");
+                                                        e.target.value = "";
+                                                    }
+                                                }}
                                                 className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                                             />
                                             <p className="mt-1 text-xs text-gray-500">

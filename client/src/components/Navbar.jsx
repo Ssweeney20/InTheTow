@@ -65,7 +65,9 @@ export default function Navbar(props) {
     }
 
     useEffect(() => {
-        fetchUser()
+        if (user){
+            fetchUser()
+        }
     }, [user?.token])
 
     return (

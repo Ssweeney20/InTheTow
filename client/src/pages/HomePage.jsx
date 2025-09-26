@@ -12,7 +12,7 @@ const HomePage = () => {
         <div className="mx-auto max-w-7xl px-4 pt-20 pb-20 md:pt-28 md:pb-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-              Real warehouse reviews.
+              Real warehouse insights.
               <span className="block text-blue-200">Less waiting.</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">

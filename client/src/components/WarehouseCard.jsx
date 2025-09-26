@@ -34,7 +34,7 @@ const WarehouseCard = ({ warehouse }) => {
                 />
 
                 {/* Rating Badge */}
-                {avgRating && (
+                {reviews.length && avgRating && (
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
                         <span className="text-sm font-semibold text-gray-900">
@@ -44,7 +44,7 @@ const WarehouseCard = ({ warehouse }) => {
                 )}
 
                 {/* Safety Score Badge */}
-                {safetyScore && (
+                {reviews.length && safetyScore && (
                     <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
                         <Shield className="h-4 w-4 text-green-600" />
                         <span className="text-sm font-semibold text-gray-900">
@@ -81,7 +81,7 @@ const WarehouseCard = ({ warehouse }) => {
                         <CheckCircle className="h-5 w-5 text-green-600 mx-auto mb-1" />
                         <div className="text-xs text-gray-600 mb-1">On-Time Rate</div>
                         <div className="text-sm font-semibold text-gray-900">
-                            {appointmentsOnTimePercentage  ? `${Math.round(appointmentsOnTimePercentage)}%` : 'N/A'}
+                            {reviews.length  ? `${Math.round(appointmentsOnTimePercentage)}%` : 'N/A'}
                         </div>
                     </div>
                 </div>

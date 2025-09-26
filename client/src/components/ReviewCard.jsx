@@ -1,6 +1,7 @@
 import React from 'react'
 import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ReviewImageGallery } from './ImageGallery';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -158,29 +159,10 @@ const ReviewCard = (props) => {
             {/* Photos */}
             {photos && photos.length > 0 && (
                 <div className="mb-4">
-                    <div className="grid grid-cols-4 gap-2">
-                        {photos.slice(0, 4).map((url, i) => (
-                            <div
-                                key={url + i}
-                                className="aspect-square overflow-hidden rounded-lg bg-gray-100"
-                            >
-                                <img
-                                    loading="lazy"
-                                    src={url}
-                                    alt={`Review photo ${i + 1}`}
-                                    className="h-full w-full object-cover hover:scale-105 transition-transform cursor-pointer"
-                                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    {photos.length > 4 && (
-                        <p className="mt-2 text-xs text-gray-500">
-                            +{photos.length - 4} more photos
-                        </p>
-                    )}
+                    <ReviewImageGallery photos={photos} reviewId={review._id || 'review'} />
                 </div>
             )}
+
 
             {/* Footer with helpful votes */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-100">
