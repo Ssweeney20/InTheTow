@@ -12,8 +12,6 @@ export default function AccountSettingsPage() {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
 
-    console.log(displayNameEntry)
-
     const fetchUser = async () => {
 
         const API_OPTIONS = {

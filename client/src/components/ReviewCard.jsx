@@ -1,6 +1,7 @@
 import React from 'react'
-import { StarIcon } from '@heroicons/react/20/solid';
+import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { ReviewImageGallery } from './ImageGallery';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -64,123 +65,120 @@ const ReviewCard = (props) => {
 
 
     return (
-        <div class="flex items-start">
-            <div class="flex-shrink-0">
-                <div class="inline-block relative">
-                    <div class="relative w-16 h-16 rounded-full overflow-hidden">
-                        {user?.photoURL ? (
-                            <img
-                                className="absolute top-0 left-0 w-full h-full object-cover"
-                                src={user.photoURL}
-                                alt="Profile picture"
-                            />
-                        ) : (
-                            <img
-                                className="absolute top-0 left-0 w-full h-full object-cover"
-                                src="/profile-placeholder.svg"
-                                alt="Default profile"
-                            />
-                        )}
-                        <div class="absolute top-0 left-0 w-full h-full rounded-full shadow-inner"></div>
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+            {/* Header with user info and rating */}
+            <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                    <div className="relative">
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+                            {user?.photoURL ? (
+                                <img
+                                    className="w-full h-full object-cover"
+                                    src={user.photoURL}
+                                    alt="Profile picture"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                                    <User className="w-6 h-6 text-blue-600" />
+                                </div>
+                            )}
+                        </div>
+                        {/* Verified badge */}
+                        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
                     </div>
-                    <svg class="fill-current text-white bg-green-600 rounded-full p-1 absolute bottom-0 right-0 w-6 h-6 -mx-1 -my-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M19 11a7.5 7.5 0 0 1-3.5 5.94L10 20l-5.5-3.06A7.5 7.5 0 0 1 1 11V3c3.38 0 6.5-1.12 9-3 2.5 1.89 5.62 3 9 3v8zm-9 1.08l2.92 2.04-1.03-3.41 2.84-2.15-3.56-.08L10 5.12 8.83 8.48l-3.56.08L8.1 10.7l-1.03 3.4L10 12.09z" />
-                    </svg>
+
+                    <div>
+                        <p className="font-semibold text-gray-900">{displayName}</p>
+                        <p className="text-sm text-green-600 font-medium">Verified Driver</p>
+                        <p className="text-xs text-gray-500">{new Date(review.createdAt).toLocaleDateString()}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="ml-6">
-                <p class="flex items-baseline">
-                    <span class="text-gray-600 font-bold">{displayName}</span>
-                    <span class="ml-2 text-green-600 text-xs">Verified Driver</span>
-                </p>
-                <div class="flex items-center mt-1">
+
+                {/* Overall Rating */}
+                <div className="flex items-center space-x-1">
                     {[0, 1, 2, 3, 4].map((i) => (
-                        <svg class={review.rating > i ? "w-4 h-4 fill-current text-yellow-600" : "w-4 h-4 fill-current text-gray-400"} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" /></svg>
+                        <Star
+                            key={i}
+                            className={`w-5 h-5 ${review.rating > i ? "text-yellow-500 fill-current" : "text-gray-300"}`}
+                        />
                     ))}
                 </div>
-                <div className="flex items-center mt-4 text-gray-600 divide-x divide-gray-300">
-                    <div className="flex items-center px-4">
-                        <span className="text-sm">Time Docked:</span>
-                        <div className="flex items-center ml-2">
-                            <span className="text-sm">{durationMinutes} Minutes</span>
-                        </div>
-                    </div>
+            </div>
 
-                    <div className="flex items-center px-4">
-                        <span className="text-sm">Safety Rating:</span>
-                        <div className="flex items-center ml-2">
-                            {[0, 1, 2, 3, 4].map((i) => (
-                                <svg
-                                    key={i}
-                                    className={
-                                        review.safety > i
-                                            ? "w-3 h-3 fill-current text-yellow-600"
-                                            : "w-3 h-3 fill-current text-gray-400"
-                                    }
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                </svg>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex items-center px-4">
-                        <span className="text-sm">Time Seen:</span>
-                        <div className="flex items-center ml-2">
-                            <span className={`text-sm ${actualSeenMinutes <= 0 ? "text-green-600" : "text-red-600"}`}>{actualSeenMinutes === 0 ? "On Time" : actualSeenMinutes <= 0 ? (`${Math.abs(actualSeenMinutes)} Minutes Early`) : (`${actualSeenMinutes} Minutes Late`)}</span>
-                        </div>
-                    </div>
-
-
+            {/* Key metrics */}
+            <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <Clock className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600">Time Docked</div>
+                    <div className="text-sm font-semibold text-gray-900">{durationMinutes} min</div>
                 </div>
-                <div class="mt-3">
-                    <p class="mt-1">{review.reviewText}</p>
-                </div>
-                <div class="flex items-center justify-between mt-4 text-sm text-gray-600 fill-current">
-                    <button class="flex items-center">
-                        <span className="text-sm">{new Date(review.createdAt).toLocaleDateString()}</span>
-                    </button>
-                    <div class="flex items-center">
-                        <span>Was this review helplful?</span>
-                        <button class="flex items-center ml-6">
-                            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 0h1v3l3 7v8a2 2 0 0 1-2 2H5c-1.1 0-2.31-.84-2.7-1.88L0 12v-2a2 2 0 0 1 2-2h7V2a2 2 0 0 1 2-2zm6 10h3v10h-3V10z" /></svg>
-                            <span class="ml-2">56</span>
-                        </button>
-                        <button class="flex items-center ml-4">
-                            <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M11 20a2 2 0 0 1-2-2v-6H2a2 2 0 0 1-2-2V8l2.3-6.12A3.11 3.11 0 0 1 5 0h8a2 2 0 0 1 2 2v8l-3 7v3h-1zm6-10V0h3v10h-3z" /></svg>
-                            <span class="ml-2">10</span>
-                        </button>
+
+                <div className="bg-green-50 rounded-lg p-3 text-center">
+                    <CheckCircle className="w-5 h-5 text-green-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600">Punctuality</div>
+                    <div className={`text-sm font-semibold ${actualSeenMinutes <= 0 ? "text-green-700" : "text-red-700"}`}>
+                        {actualSeenMinutes === 0 ? "On Time" : actualSeenMinutes <= 0 ? `${Math.abs(actualSeenMinutes)}m Early` : `${actualSeenMinutes}m Late`}
                     </div>
                 </div>
 
-                {photos.length > 0 && (
-                    <div className="mt-4">
-                        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-                            {photos.slice(0, 8).map((url, i) => (
-                                <div
-                                    key={url + i}
-                                    className="aspect-square overflow-hidden rounded-lg ring-1 ring-black/5"
-                                >
-                                    <img
-                                        loading="lazy"
-                                        src={url}
-                                        alt={`Review photo ${i + 1}`}
-                                        className="h-full w-full object-cover"
-                                        onError={(e) => (e.currentTarget.style.display = 'none')}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-
-                        {photos.length > 8 && (
-                            <p className="mt-2 text-xs text-gray-500">
-                                Showing 8 of {photos.length} photos.
-                            </p>
-                        )}
+                <div className="bg-yellow-50 rounded-lg p-3 text-center">
+                    <Shield className="w-5 h-5 text-yellow-600 mx-auto mb-1" />
+                    <div className="text-xs text-gray-600">Safety</div>
+                    <div className="flex justify-center space-x-0.5 mt-1">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                            <Star
+                                key={i}
+                                className={`w-3 h-3 ${review.safety > i ? "text-yellow-500 fill-current" : "text-gray-300"}`}
+                            />
+                        ))}
                     </div>
+                </div>
+            </div>
+
+            {/* Review text */}
+            <div className="mb-4">
+                <p className="text-gray-700 leading-relaxed">{review.reviewText}</p>
+            </div>
+
+            {/* Additional info tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+                {review.hasLumper && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Lumper Fee Required
+                    </span>
                 )}
+                {review.overnightParking && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Overnight Parking Available
+                    </span>
+                )}
+            </div>
+
+            {/* Photos */}
+            {photos && photos.length > 0 && (
+                <div className="mb-4">
+                    <ReviewImageGallery photos={photos} reviewId={review._id || 'review'} />
+                </div>
+            )}
+
+
+            {/* Footer with helpful votes */}
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                <div className="text-sm text-gray-600">
+                    Was this review helpful?
+                </div>
+                <div className="flex items-center space-x-4">
+                    <button className="flex items-center space-x-1 text-gray-500 hover:text-green-600 transition-colors">
+                        <ThumbsUp className="w-4 h-4" />
+                        <span className="text-sm">56</span>
+                    </button>
+                    <button className="flex items-center space-x-1 text-gray-500 hover:text-red-600 transition-colors">
+                        <ThumbsDown className="w-4 h-4" />
+                        <span className="text-sm">10</span>
+                    </button>
+                </div>
             </div>
         </div>
     )

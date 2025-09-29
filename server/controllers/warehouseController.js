@@ -24,7 +24,7 @@ const s3 = new S3Client({
 const generateImageURL = async (images) => {
 
     const imageURL = []
-    for (let i = images.length - 1; i >= 0 && imageURL.length < 4; i--) {
+    for (let i = images.length - 1; i >= 0 && imageURL.length < 8; i--) {
         const imageName = images[i]
         const getObjectParams = {
             Bucket: bucketName,
