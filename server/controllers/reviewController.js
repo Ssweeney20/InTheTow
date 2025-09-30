@@ -47,7 +47,15 @@ const generateImageURL = async (images) => {
 
 const getAllReviews = async (req, res, next) => {
     try {
-        const reviews = await Review.find().lean()
+        const page = parseInt(req.query.page) - 1 || 0
+        const limit = parseInt(req.query.limit) || 5
+
+        const reviews = await Review.find()
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+
+        const total = await Review.countDocuments();
 
         for (let review of reviews) {
             if (review.photos) {
@@ -58,7 +66,15 @@ const getAllReviews = async (req, res, next) => {
             }
         }
 
-        res.json(reviews)
+        const apiResponse = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            reviews,
+        }
+
+        res.json(apiResponse)
     }
     catch (err) {
         next(err)
@@ -91,11 +107,21 @@ const getReviewsByUser = async (req, res, next) => {
     const userID = req.user;
 
     try {
+
+        const page = parseInt(req.query.page) - 1 || 0
+        const limit = parseInt(req.query.limit) || 5
+
         const exists = await User.exists({ _id: userID });
         if (!exists) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const reviews = await Review.find({ user: userID }).sort({ createdAt: -1 }).lean()
+
+        const reviews = await Review.find({ user: userID }).sort({ createdAt: -1 })
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+
+        const total = await Review.countDocuments({user: userID });
 
         for (let review of reviews) {
             if (review.photos) {
@@ -106,7 +132,15 @@ const getReviewsByUser = async (req, res, next) => {
             }
         }
 
-        res.json(reviews)
+        const apiResponse = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            reviews,
+        }
+
+        res.json(apiResponse)
     }
     catch (err) {
         next(err)
@@ -118,11 +152,19 @@ const getReviewsByWarehouse = async (req, res, next) => {
     const { warehouseID } = req.params;
 
     try {
+        const page = parseInt(req.query.page) - 1 || 0
+        const limit = parseInt(req.query.limit) || 5
+
         const exists = await Warehouse.exists({ _id: warehouseID });
         if (!exists) {
             return res.status(404).json({ error: 'Warehouse not found' });
         }
-        const reviews = await Review.find({ warehouse: warehouseID }).sort({ createdAt: -1 }).lean()
+        const reviews = await Review.find({ warehouse: warehouseID }).sort({ createdAt: -1 })
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+        
+        const total = await Review.countDocuments({warehouse: warehouseID });
 
         for (let review of reviews) {
             if (review.photos) {
@@ -133,7 +175,15 @@ const getReviewsByWarehouse = async (req, res, next) => {
             }
         }
 
-        res.json(reviews)
+        const apiResponse = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            reviews,
+        }
+
+        res.json(apiResponse)
     }
     catch (err) {
         next(err)
@@ -155,12 +205,12 @@ const createReview = async (req, res, next) => {
             const photoName = randomImageName()
 
             const resizedImage = await sharp(file.buffer)
-                .rotate() 
+                .rotate()
                 .resize({
                     width: 1280,
                     withoutEnlargement: true,
                 })
-                .jpeg({quality: 75})
+                .jpeg({ quality: 75 })
                 .toBuffer();
 
             params = {
