@@ -10,6 +10,8 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const MyReviewPage = () => {
     const { user } = useAuthContext()
     const [reviews, setReviews] = useState([])
+    const [page, setPage] = useState(1)
+    const [totalReviews, setTotalReviews] = useState(0)
 
     const fetchReviews = async () => {
 
@@ -22,7 +24,7 @@ const MyReviewPage = () => {
         }
 
         try {
-            const endpoint = `${API_BASE_URL}reviews/user`;
+            const endpoint = `${API_BASE_URL}reviews/user?page=${page}`;
 
             const response = await fetch(endpoint, API_OPTIONS);
             if (!response.ok) {
@@ -31,7 +33,9 @@ const MyReviewPage = () => {
 
             const data = await response.json();
 
-            setReviews(data || []);
+            setTotalReviews(data.total)
+
+            setReviews(prev => [...prev, ...(data.reviews)]);
 
         } catch (error) {
             console.error(`error fetching reviews: ${error}`);
@@ -39,16 +43,16 @@ const MyReviewPage = () => {
     }
 
     useEffect(() => {
-      fetchReviews();
-    }, [])
-    
+        fetchReviews();
+    }, [page])
+
 
     return (
         <>
             <div className="min-h-screen bg-white">
                 <div className="w-full px-4 pt-10 pb-16 sm:px-6 lg:px-8 lg:pt-16 lg:pb-24">
                     <div className="mt-10">
-                        <h2 className="text-sm font-medium text-gray-900">My Reviews</h2>
+                        <h2 className="text-sm font-medium text-gray-900">My Reviews ({totalReviews})</h2>
                         <div className="mt-4 space-y-4">
                             {(reviews ?? []).length === 0 ? (
                                 <p className="text-sm text-gray-600">No reviews yet.</p>
@@ -62,6 +66,21 @@ const MyReviewPage = () => {
                                 </ul>
                             )}
                         </div>
+                        {/* Load More */}
+                        {reviews.length > 0 && page < Math.ceil(totalReviews / 5) && (
+                            <div className="text-center mt-12">
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        setPage(prev => prev + 1)
+                                    }}
+                                    className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                    {"Load more reviews"}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

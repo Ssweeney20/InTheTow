@@ -38,6 +38,8 @@ export default function WarehouseDetail() {
     const [warehouse, setWarehouse] = useState(null);
     const [reviews, setReviews] = useState([])
     const [errorMessage, seterrorMessage] = useState('');
+    const [page, setPage] = useState(1)
+    const [totalReviews, setTotalReviews] = useState(0)
 
     {/* Add Review states */ }
     const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -61,8 +63,6 @@ export default function WarehouseDetail() {
 
             setWarehouse(data || {});
 
-            await fetchReviews(warehouseID)
-
         } catch (error) {
             console.error(`error fetching warehouse: ${error}`);
             seterrorMessage("Error fetching warehouse, please try again later.");
@@ -73,7 +73,7 @@ export default function WarehouseDetail() {
 
     const fetchReviews = async (searchQuery = '') => {
         try {
-            const endpoint = `${API_BASE_URL}reviews/warehouse/${encodeURIComponent(searchQuery)}`;
+            const endpoint = `${API_BASE_URL}reviews/warehouse/${encodeURIComponent(searchQuery)}?page=${page}`;
 
             const response = await fetch(endpoint, API_OPTIONS);
             if (!response.ok) {
@@ -82,7 +82,9 @@ export default function WarehouseDetail() {
 
             const data = await response.json();
 
-            setReviews(data || []);
+            setTotalReviews(data.total)
+
+            setReviews(prev => [...prev, ...(data.reviews)]);
 
         } catch (error) {
             console.error(`error fetching reviews: ${error}`);
@@ -115,9 +117,8 @@ export default function WarehouseDetail() {
 
                 if (!res.ok) throw new Error(`Failed to add review (${res.status})`);
 
-                // refresh the warehouse detail after posting:
-                await fetchWarehouse(warehouseID);
-
+                window.location.reload();
+                return
                 setIsReviewOpen(false);
                 e.currentTarget.reset();
             } catch (err) {
@@ -132,6 +133,11 @@ export default function WarehouseDetail() {
     useEffect(() => {
         fetchWarehouse(warehouseID);
     }, [warehouseID]);
+
+    useEffect(() => {
+        fetchReviews(warehouseID);
+    }, [page]);
+
 
     const photos = warehouse?.photoURLs ?? [];
     const placeholder = "/placeholder-image.jpg";
@@ -329,7 +335,7 @@ export default function WarehouseDetail() {
                                     <div className="flex items-center justify-between mb-6">
                                         <h2 className="text-xl font-semibold text-gray-900">Driver Reviews</h2>
                                         <span className="text-sm text-gray-500">
-                                            {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+                                            {totalReviews} {totalReviews === 1 ? 'review' : 'reviews'}
                                         </span>
                                     </div>
 
@@ -347,6 +353,22 @@ export default function WarehouseDetail() {
                                             ))
                                         )}
                                     </div>
+                                    {/* Load More */}
+                                    {reviews.length > 0 && page < Math.ceil(totalReviews / 5) && (
+                                        <div className="text-center mt-12">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault()
+                                                    e.stopPropagation()
+                                                    setPage(prev => prev + 1)
+                                                }}
+                                                disabled={isLoading}
+                                                className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                                {isLoading ? "Loading…" : "Load more reviews"}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>

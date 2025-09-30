@@ -33,7 +33,7 @@ const WarehouseBrowser = () => {
         seterrorMessage('');
 
         try {
-            const endpoint = searchQuery ? `${API_BASE_URL}warehouses/search?q=${encodeURIComponent(searchQuery)}&page=${page}` : `${API_BASE_URL}warehouses?page=${page}`
+            const endpoint = searchQuery ? `${API_BASE_URL}warehouses/search?q=${encodeURIComponent(searchQuery)}&page=${page}&limit=10` : `${API_BASE_URL}warehouses?page=${page}&limit=10`
 
             const response = await fetch(endpoint, API_OPTIONS);
             if (!response.ok) {
@@ -204,7 +204,7 @@ const WarehouseBrowser = () => {
                     )}
 
                     {/* Load More */}
-                    {!isLoading && warehouseList.length > 0 && page < Math.ceil(totalResults / 5) &&(
+                    {!isLoading && warehouseList.length > 0 && page < Math.ceil(totalResults / 10) &&(
                         <div className="text-center mt-12">
                             <button 
                             type="button"
