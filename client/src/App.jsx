@@ -1,5 +1,5 @@
 import './index.css'
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthContext } from './hooks/useAuthContext';
 
 import WarehouseBrowser from './pages/WarehouseBrowser';
