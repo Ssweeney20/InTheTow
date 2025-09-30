@@ -15,12 +15,14 @@ const API_OPTIONS = {
     }
 }
 
-const warehouseBrowser = () => {
+const WarehouseBrowser = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [errorMessage, seterrorMessage] = useState('');
     const [warehouseList, setwarehouseList] = useState([]);
     const [isLoading, setisLoading] = useState(false);
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+    const [page, setPage] = useState(1)
+    const [totalResults, setTotalResults] = useState(0)
 
     useDebounce(() => {
         setDebouncedSearchTerm(searchTerm)
@@ -31,7 +33,7 @@ const warehouseBrowser = () => {
         seterrorMessage('');
 
         try {
-            const endpoint = searchQuery ? `${API_BASE_URL}warehouses/search?q=${encodeURIComponent(searchQuery)}` : `${API_BASE_URL}warehouses`
+            const endpoint = searchQuery ? `${API_BASE_URL}warehouses/search?q=${encodeURIComponent(searchQuery)}&page=${page}` : `${API_BASE_URL}warehouses?page=${page}`
 
             const response = await fetch(endpoint, API_OPTIONS);
             if (!response.ok) {
@@ -40,13 +42,19 @@ const warehouseBrowser = () => {
 
             const data = await response.json();
 
-            if (!Array.isArray(data)) {
+            console.log(data)
+
+            if (!Array.isArray(data.warehouses)) {
                 seterrorMessage(data.Error || 'Failed to fetch warehouses');
-                setwarehouseList([]);
+                setwarehouseList([...warehouseList]);
                 return;
             }
 
-            setwarehouseList(data || []);
+            if (Number.isInteger(data.total)){
+                setTotalResults(data.total)
+            }
+
+            setwarehouseList(prev => [...prev, ...(data.warehouses)]);
 
         } catch (error) {
             console.error(`error fetching warehouse: ${error}`);
@@ -58,8 +66,18 @@ const warehouseBrowser = () => {
 
     useEffect(() => {
         fetchWarehouses(debouncedSearchTerm);
+    }, [debouncedSearchTerm, page]);
+
+    useEffect(() => {
+        setwarehouseList([])
+        setPage(1)
     }, [debouncedSearchTerm]);
 
+    console.log(debouncedSearchTerm)
+
+    console.log("total pages ", Math.ceil(totalResults / 5))
+
+    console.log(page)
     return (
         <main className="bg-gray-50 min-h-screen">
             {/* Hero Header Section */}
@@ -85,7 +103,7 @@ const warehouseBrowser = () => {
                         {/* Quick stats */}
                         <div className="grid grid-cols-3 gap-6 mt-12 max-w-lg mx-auto">
                             <div className="text-center">
-                                <div className="text-2xl font-bold">{warehouseList.length}</div>
+                                <div className="text-2xl font-bold">{totalResults}</div>
                                 <div className="text-blue-200 text-sm">Warehouses</div>
                             </div>
                             <div className="text-center">
@@ -111,7 +129,7 @@ const warehouseBrowser = () => {
                                 {searchTerm ? `Search Results for "${searchTerm}"` : 'All Warehouses'}
                             </h2>
                             <p className="text-gray-600 mt-1">
-                                {isLoading ? 'Searching...' : `${warehouseList.length} warehouses found`}
+                                {isLoading ? 'Searching...' : `${warehouseList.length} / ${totalResults} warehouses found`}
                             </p>
                         </div>
 
@@ -171,7 +189,7 @@ const warehouseBrowser = () => {
                     )}
 
                     {/* Results Grid */}
-                    {!isLoading && !errorMessage && warehouseList.length > 0 && (
+                    {!errorMessage && warehouseList.length > 0 && (
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                             {warehouseList.map((warehouse) => (
                                 <Link
@@ -185,11 +203,19 @@ const warehouseBrowser = () => {
                         </div>
                     )}
 
-                    {/* Load More / Pagination placeholder */}
-                    {!isLoading && warehouseList.length > 0 && (
+                    {/* Load More */}
+                    {!isLoading && warehouseList.length > 0 && page < Math.ceil(totalResults / 5) &&(
                         <div className="text-center mt-12">
-                            <button className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                                Load more warehouses
+                            <button 
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault()
+                                e.stopPropagation()
+                                setPage(prev => prev + 1)
+                            }}
+                            disabled={isLoading}
+                            className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                                {isLoading ? "Loading…" : "Load more warehouses"}
                             </button>
                         </div>
                     )}
@@ -199,5 +225,5 @@ const warehouseBrowser = () => {
     );
 }
 
-export default warehouseBrowser;
+export default WarehouseBrowser;
 

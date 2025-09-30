@@ -42,7 +42,15 @@ const generateImageURL = async (images) => {
 
 const getAllWarehouses = async (req, res, next) => {
     try {
-        const warehouses = await Warehouse.find().lean()
+        const page = parseInt(req.query.page) - 1 || 0
+        const limit = parseInt(req.query.limit) || 5
+
+        const warehouses = await Warehouse.find()
+            .skip(page * limit)
+            .limit(limit)
+            .lean()
+
+        const total = await Warehouse.countDocuments();
 
         for (let warehouse of warehouses) {
             if (warehouse.photos) {
@@ -52,7 +60,16 @@ const getAllWarehouses = async (req, res, next) => {
                 warehouse.photoURLs = []
             }
         }
-        res.json(warehouses)
+
+        const apiResponse = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            warehouses,
+        }
+
+        res.json(apiResponse)
     }
     catch (err) {
         next(err)
@@ -164,6 +181,10 @@ const deleteWarehouseByID = async (req, res, next) => {
 
 const searchWarehouses = async (req, res, next) => {
     try {
+
+        const page = parseInt(req.query.page) - 1 || 0
+        const limit = parseInt(req.query.limit) || 5
+
         const { q } = req.query
         if (!q) {
             return res.status(400).json({ error: "query is required" })
@@ -173,7 +194,7 @@ const searchWarehouses = async (req, res, next) => {
         searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
         const re = new RegExp(searchQuery, 'i')
 
-        const results = await Warehouse.find({
+        const warehouses = await Warehouse.find({
             $or: [
                 { nameSearchKey: re },
                 { addressSearchKey: re },
@@ -181,18 +202,39 @@ const searchWarehouses = async (req, res, next) => {
                 { zipSearchKey: re },
                 { stateSearchKey: re }
             ]
-        }).limit(25).lean();
+        })
+            .skip(page * limit)
+            .limit(limit)
+            .lean();
 
-        for (let result of results) {
-            if (result.photos) {
-                result.photoURLs = await generateImageURL(result.photos)
+        for (let warehouse of warehouses) {
+            if (warehouse.photos) {
+                warehouse.photoURLs = await generateImageURL(warehouse.photos)
             }
             else {
-                result.photoURLs = []
+                warehouse.photoURLs = []
             }
         }
 
-        res.json(results)
+        const total = await Warehouse.countDocuments({
+            $or: [
+                { nameSearchKey: re },
+                { addressSearchKey: re },
+                { citySearchKey: re },
+                { zipSearchKey: re },
+                { stateSearchKey: re }
+            ]
+        });
+
+        const apiResponse = {
+            error: false,
+            total,
+            page: page + 1,
+            limit,
+            warehouses,
+        }
+
+        res.json(apiResponse)
     }
     catch (err) {
         next(err)
