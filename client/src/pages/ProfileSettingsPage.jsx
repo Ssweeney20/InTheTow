@@ -9,8 +9,12 @@ export default function AccountSettingsPage() {
     const { user } = useAuthContext()
     const [profile, setProfile] = useState(null)
     const [displayNameEntry, setDisplayNameEntry] = useState('')
+    const [currPassword, setcurrPassword] = useState('')
+    const [newConfirmPassword, setnewConfirmPassword] = useState('')
+    const [newPassword, setnewPassword] = useState('')
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
+    const [passwordSuccessMessage, setpasswordSuccessMessage] = useState("");
 
     const fetchUser = async () => {
 
@@ -96,7 +100,7 @@ export default function AccountSettingsPage() {
                 });
 
                 if (!res.ok) throw new Error(`Failed to change display name (${res.status})`);
-                
+
                 await fetchUser()
 
             } catch (err) {
@@ -105,6 +109,59 @@ export default function AccountSettingsPage() {
             } finally {
                 setSubmitting(false);
                 setDisplayNameEntry("");
+            }
+        }
+    }
+
+    async function changePassword() {
+
+        if (!currPassword) {
+            setSubmitError("Please enter your current password");
+            return
+        }
+        if (!newPassword) {
+            setSubmitError("Please enter your new password");
+            return
+        }
+        if (!newConfirmPassword) {
+            setSubmitError("Please enter confirm your new password");
+            return
+        }
+        if (newPassword !== newConfirmPassword) {
+            setSubmitError("Passwords do not match");
+            return
+        }
+
+        if (user) {
+            setSubmitting(true);
+            setSubmitError("");
+
+            try {
+
+                const res = await fetch(`${API_BASE_URL}user/change-password`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${user.token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        currentPassword: currPassword,
+                        newPassword: newPassword
+                    })
+                });
+
+                if (!res.ok) throw new Error(`Failed to change password (${res.status})`);
+
+                setpasswordSuccessMessage("Password updated successfully!")
+                setcurrPassword("");
+                setnewPassword("");
+                setnewConfirmPassword("");
+
+            } catch (err) {
+                console.error(err);
+                setSubmitError("Could not change password. Please verify current password and/or confirm new password meets requirements.");
+            } finally {
+                setSubmitting(false);
             }
         }
     }
@@ -199,6 +256,8 @@ export default function AccountSettingsPage() {
                                         </label>
                                         <input
                                             type="password"
+                                            value={currPassword}
+                                            onChange={(e) => { setcurrPassword(e.target.value) }}
                                             placeholder="Enter current password"
                                             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
                                         />
@@ -210,6 +269,8 @@ export default function AccountSettingsPage() {
                                         </label>
                                         <input
                                             type="password"
+                                            value={newPassword}
+                                            onChange={(e) => { setnewPassword(e.target.value) }}
                                             placeholder="Enter new password"
                                             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
                                         />
@@ -226,6 +287,8 @@ export default function AccountSettingsPage() {
                                         <input
                                             id="retype"
                                             type="password"
+                                            value={newConfirmPassword}
+                                            onChange={(e) => { setnewConfirmPassword(e.target.value) }}
                                             placeholder="Re-type new password"
                                             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
                                         />
@@ -233,13 +296,17 @@ export default function AccountSettingsPage() {
 
                                     <button
                                         type="button"
+                                        onClick={changePassword}
                                         className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600/90 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
                                     >
                                         Change password
                                     </button>
+
+                                    {submitError && <p className="mt-3 text-sm text-red-600">{submitError}</p>}
+                                    {passwordSuccessMessage && <p className="mt-3 text-sm text-green-600">{passwordSuccessMessage}</p>}
                                 </section>
 
-                
+
                             </>
                         )}
                 </div>
