@@ -12,11 +12,11 @@ const HomePage = () => {
         <div className="mx-auto max-w-7xl px-4 pt-20 pb-20 md:pt-28 md:pb-24">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-              Real warehouse insights.
-              <span className="block text-blue-200">Less waiting.</span>
+              Where drivers share what dispatch won't.
+              <span className="block text-blue-200">Wait less. Drive more.</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-              InTheTow helps drivers see wait times, parking info, and on-site tips—before they arrive.
+              See what's ahead at every warehouse. Real wait times, parking info, and driver notes that save you hours.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -36,7 +36,7 @@ const HomePage = () => {
             </div>
 
             <p className="text-blue-200">
-              Community-powered by drivers across the U.S.
+              Community powered by drivers across the U.S.
             </p>
           </div>
         </div>
@@ -85,8 +85,8 @@ const HomePage = () => {
           <div className="grid gap-8 md:grid-cols-3">
             <ValueCard 
               icon={Clock}
-              title="Wait-time visibility"
-              description="See appointment vs. actual dock times so you can plan arrivals smarter."
+              title="Wait Smarter"
+              description="See how long drivers actually waited compared to appointment times, so you can plan your stop with confidence."
             />
             <ValueCard 
               icon={MapPin}
@@ -161,7 +161,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} InTheTow. All rights reserved.</p>
+            <p>&copy; 2025 InTheTow. All rights reserved.</p>
           </div>
         </div>
       </footer>
