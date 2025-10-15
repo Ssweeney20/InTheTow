@@ -10,6 +10,7 @@ import SignupPage from './pages/SignupPage';
 import MyReviewPage from './pages/MyReviewPage';
 import ProfileSettingsPage from './pages/ProfileSettingsPage'
 import MainLayout from './components/MainLayout';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   const { user } = useAuthContext()
@@ -21,6 +22,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="/warehouses" element={<WarehouseBrowser />} />
           <Route path="/warehouses/:warehouseID" element={<WarehouseDetail />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="/login"
             element={!user ? <LoginPage /> : <Navigate to="/" replace />}
