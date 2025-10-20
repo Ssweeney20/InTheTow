@@ -13,7 +13,7 @@ const HomePage = () => {
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
               Where drivers share what dispatch won't.
-              <span className="block text-blue-200">Wait less. Drive more.</span>
+              <span className="pt-5 text-3xl block text-blue-200">Wait less. Drive more.</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
               See what's ahead at every warehouse. Real wait times, parking info, and driver notes that save you hours.
