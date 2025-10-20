@@ -163,23 +163,6 @@ const ReviewCard = (props) => {
                 </div>
             )}
 
-
-            {/* Footer with helpful votes */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="text-sm text-gray-600">
-                    Was this review helpful?
-                </div>
-                <div className="flex items-center space-x-4">
-                    <button className="flex items-center space-x-1 text-gray-500 hover:text-green-600 transition-colors">
-                        <ThumbsUp className="w-4 h-4" />
-                        <span className="text-sm">56</span>
-                    </button>
-                    <button className="flex items-center space-x-1 text-gray-500 hover:text-red-600 transition-colors">
-                        <ThumbsDown className="w-4 h-4" />
-                        <span className="text-sm">10</span>
-                    </button>
-                </div>
-            </div>
         </div>
     )
 }

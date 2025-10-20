@@ -93,6 +93,40 @@ UserSchema.statics.login = async function(email, password){
 
 }
 
+UserSchema.statics.changePassword = async function(userID, currPassword, newPassword){
+
+    // validation
+    if (!currPassword || !newPassword || !userID){
+        throw Error('All fields are required')
+    }
+    
+    const user = await this.findById(userID)
+
+    if (!user){
+        throw Error('Invalid User')
+    }
+
+    const match = await bcrypt.compare(currPassword, user.hash)
+
+    if (!match){
+        throw Error('Incorrect current password')
+    }
+
+    if (!validator.isStrongPassword(newPassword)){
+        throw Error('Password not strong enough')
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const hash = await bcrypt.hash(newPassword, salt)
+
+    user.hash = hash
+
+    await user.save()
+
+    return user
+
+}
+
 const User = mongoose.model("User", UserSchema)
 
 module.exports = User

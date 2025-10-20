@@ -185,6 +185,21 @@ const changeDisplayName = async (req, res, next) => {
     }
 }
 
+const changePassword = async (req, res, next) => {
+
+    const userID = req.user;
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+        const user = await User.changePassword(userID, currentPassword, newPassword)
+
+        res.status(200).json(user)
+
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+}
 
 
-module.exports = { loginUser, signupUser, getUserByID, getCurrentUser, uploadProfilePic, changeDisplayName }
+
+module.exports = { loginUser, signupUser, getUserByID, getCurrentUser, uploadProfilePic, changeDisplayName, changePassword }
