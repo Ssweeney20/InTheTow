@@ -11,7 +11,7 @@ InTheTow is a full stack MERN (MongoDB, Express, React, Node.js) web app that he
 ![Home Page](./screenshots/Homepage.png)
 
 ### Warehouse Details Page
-![Warehouse Page](./screenshots/warehouse_Example.png)
+![Warehouse Page](./screenshots/Warehouse_Example.png)
 
 ### Warehouse Browser
 ![Warehouse Browser](./screenshots/Warehouse_Browser_2.png)
