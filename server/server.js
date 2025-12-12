@@ -5,6 +5,7 @@ const corsOptions = {
     origin : "http://localhost:5173",
 };
 const mongoose = require('mongoose');
+const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('DB Connected!'))
@@ -23,8 +24,8 @@ app.use('/api/reviews', require('./routes/reviews'))
 app.use('/api/user', require('./routes/users'))
 
 
-app.listen(8080, () => {
-    console.log("Server started on port 8080");
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
 })
 
 
