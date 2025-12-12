@@ -2,7 +2,11 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const corsOptions = {
-    origin : "http://localhost:5173",
+  origin: [
+    "http://localhost:5173",
+    "https://inthetow.com",
+    "https://www.inthetow.com"
+  ]
 };
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 8080;
