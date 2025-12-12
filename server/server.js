@@ -7,26 +7,30 @@ const corsOptions = {
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 8080;
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('DB Connected!'))
-  .catch((err) => console.log(err));
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("DB Connected!");
 
-const app = express();
+    const app = express();
 
-app.use(cors(corsOptions))
+    app.use(cors(corsOptions));
+    app.use(express.json());
 
-app.use(express.json())
+    app.use("/api/warehouses", require("./routes/warehouses"));
+    app.use("/api/reviews", require("./routes/reviews"));
+    app.use("/api/user", require("./routes/users"));
 
-app.use('/api/warehouses', require('./routes/warehouses'))
+    app.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`);
+    });
+  } catch (err) {
+    console.log("Mongo connection error:", err);
+    process.exit(1);
+  }
+};
 
-app.use('/api/reviews', require('./routes/reviews'))
-
-app.use('/api/user', require('./routes/users'))
-
-
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-})
+startServer();
 
 
 
