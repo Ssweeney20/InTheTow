@@ -43,7 +43,8 @@ const HomePage = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white border-b">
+      
+      {/* <section className="py-16 bg-white border-b">
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -68,7 +69,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Value Props Section */}
       <section className="py-20 bg-gray-50">
@@ -109,9 +110,6 @@ const HomePage = () => {
           <h3 className="text-3xl md:text-4xl font-bold mb-4">
             Share a review. Save someone's shift.
           </h3>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Quick, structured posts keep info consistent and useful for everyone.
-          </p>
           {!user && (
           <Link
             to="/signup"
@@ -140,23 +138,18 @@ const HomePage = () => {
               <ul className="space-y-2">
                 <li><Link to="/warehouses" className="hover:text-white transition-colors">Find Warehouses</Link></li>
                 <li><Link to="/signup" className="hover:text-white transition-colors">Write Reviews</Link></li>
-                <li><a href="#" className="hover:text-white transition-colors">Mobile App</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">For Businesses</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition-colors">Claim Your Warehouse</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Analytics Dashboard</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Premium Features</a></li>
+                <li><a className="hover:text-white transition-colors">Coming Soon</a></li>
               </ul>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">Support</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+                <li><a href="mailto:inthetow@gmail.com" className="hover:text-white transition-colors">Contact Us</a></li>
               </ul>
             </div>
           </div>

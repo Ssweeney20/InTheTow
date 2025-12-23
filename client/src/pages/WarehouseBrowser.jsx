@@ -101,7 +101,7 @@ const WarehouseBrowser = () => {
                         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
                         {/* Quick stats */}
-                        <div className="grid grid-cols-3 gap-6 mt-12 max-w-lg mx-auto">
+                        {/* <div className="grid grid-cols-3 gap-6 mt-12 max-w-lg mx-auto">
                             <div className="text-center">
                                 <div className="text-2xl font-bold">{totalResults}</div>
                                 <div className="text-blue-200 text-sm">Warehouses</div>
@@ -114,7 +114,7 @@ const WarehouseBrowser = () => {
                                 <div className="text-2xl font-bold">15k+</div>
                                 <div className="text-blue-200 text-sm">Drivers</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </section>

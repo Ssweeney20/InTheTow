@@ -26,15 +26,15 @@ export default function AboutPage() {
 
                     <div className="prose prose-lg max-w-none text-gray-600">
                         <p className="mb-6">
-                            Founded after years of firsthand experience at a warehouse distribution center, where I often heard truck drivers’ stories of long waits, miscommunication, and poor conditions at loading docks. Those conversations highlighted a clear need for greater transparency in the trucking industry.
+                            Founded after years of firsthand experience at a warehouse distribution center, where I often heard truck drivers’ stories of long waits and miscommunication at loading docks. Those conversations highlighted a need for greater transparency in the trucking industry.
                         </p>
 
                         <p className="mb-6">
-                            InTheTow was created to meet that need, a community driven platform where drivers share reviews and insights about warehouses nationwide. By helping drivers plan ahead, avoid delays, and know what to expect before they arrive, InTheTow brings more efficiency and accountability to every stop on the road.
+                            InTheTow was created to meet that need, a community driven platform where drivers share reviews and insights about warehouses nationwide. By helping drivers plan ahead and know what to expect before they arrive, InTheTow brings more efficiency and accountability to every stop on the road.
                         </p>
 
                         <p>
-                            Today, InTheTow continues to evolve as a trusted resource for drivers seeking greater efficiency, accountability, and transparency throughout the industry.
+                            Today, InTheTow continues to evolve as a resource for drivers seeking greater efficiency, accountability, and transparency throughout the industry.
                         </p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@ export default function AboutPage() {
             {/* Mission & Values */}
             <section className="py-20 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Mission & Values</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-12 text-center">Our Mission</h2>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -72,7 +72,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-3">Trust & Transparency</h3>
                             <p className="text-gray-600">
-                                Honest reviews from verified drivers. No corporate influence, just real experiences.
+                                Honest reviews from drivers. No corporate influence, just real experiences.
                             </p>
                         </div>
 
@@ -102,7 +102,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-3">Search Warehouses</h3>
                             <p className="text-gray-600">
-                                Find warehouses by name, location, or company. See real reviews and metrics before you arrive.
+                                Find warehouses by name, location, or company. See real reviews and stats before you arrive.
                             </p>
                         </div>
 
@@ -112,7 +112,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-3">Visit & Experience</h3>
                             <p className="text-gray-600">
-                                Make your delivery with insights from fellow drivers about dock times, parking, and facilities.
+                                Make your delivery with help from fellow drivers about dock times, parking, and facilities.
                             </p>
                         </div>
 

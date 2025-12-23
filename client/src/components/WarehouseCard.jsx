@@ -34,7 +34,7 @@ const WarehouseCard = ({ warehouse }) => {
                 />
 
                 {/* Rating Badge */}
-                {reviews.length && avgRating && (
+                {reviews.length > 0 && numRatings > 0 && avgRating && (
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
                         <span className="text-sm font-semibold text-gray-900">
@@ -44,7 +44,7 @@ const WarehouseCard = ({ warehouse }) => {
                 )}
 
                 {/* Safety Score Badge */}
-                {reviews.length && safetyScore && (
+                {reviews.length > 0 && numRatings > 0 && safetyScore && (
                     <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
                         <Shield className="h-4 w-4 text-green-600" />
                         <span className="text-sm font-semibold text-gray-900">
