@@ -13,7 +13,7 @@ export default function AboutPage() {
                 <div className="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-                            Built for truckers. We're on a mission to make every warehouse visit more predictable and less stressful.
+                            Built for truckers. We're on a mission to make every stop more predictable and less stressful.
                         </p>
                     </div>
                 </div>
@@ -26,11 +26,11 @@ export default function AboutPage() {
 
                     <div className="prose prose-lg max-w-none text-gray-600">
                         <p className="mb-6">
-                            Founded after years of firsthand experience at a warehouse distribution center, where I often heard truck drivers’ stories of long waits and miscommunication at loading docks. Those conversations highlighted a need for greater transparency in the trucking industry.
+                            Founded after years of firsthand experience at a distribution center, where I often heard truck drivers’ stories of long waits and miscommunication at loading docks. Those conversations highlighted a need for greater transparency in the trucking industry.
                         </p>
 
                         <p className="mb-6">
-                            InTheTow was created to meet that need, a community driven platform where drivers share reviews and insights about warehouses nationwide. By helping drivers plan ahead and know what to expect before they arrive, InTheTow brings more efficiency and accountability to every stop on the road.
+                            InTheTow was created to meet that need, a community driven platform where drivers share reviews and insights about freight facilities nationwide. By helping drivers plan ahead and know what to expect before they arrive, InTheTow brings more efficiency and accountability to every stop on the road.
                         </p>
 
                         <p>
@@ -100,9 +100,9 @@ export default function AboutPage() {
                             <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <span className="text-2xl font-bold text-blue-600">1</span>
                             </div>
-                            <h3 className="text-xl font-semibold text-gray-900 mb-3">Search Warehouses</h3>
+                            <h3 className="text-xl font-semibold text-gray-900 mb-3">Search Facilities</h3>
                             <p className="text-gray-600">
-                                Find warehouses by name, location, or company. See real reviews and stats before you arrive.
+                                Find facilities by name, location, or company. See real reviews and stats before you arrive.
                             </p>
                         </div>
 
@@ -112,7 +112,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-3">Visit & Experience</h3>
                             <p className="text-gray-600">
-                                Make your delivery with help from fellow drivers about dock times, parking, and facilities.
+                                Make your delivery or pickup with help from fellow drivers about dock times, parking, and more.
                             </p>
                         </div>
 

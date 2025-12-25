@@ -42,7 +42,7 @@ const WarehouseBrowser = () => {
 
             const data = await response.json();
 
-            console.log(data)
+            // console.log(data)
 
             if (!Array.isArray(data.warehouses)) {
                 seterrorMessage(data.Error || 'Failed to fetch warehouses');
@@ -73,11 +73,11 @@ const WarehouseBrowser = () => {
         setPage(1)
     }, [debouncedSearchTerm]);
 
-    console.log(debouncedSearchTerm)
+    // console.log(debouncedSearchTerm)
 
-    console.log("total pages ", Math.ceil(totalResults / 5))
+    // console.log("total pages ", Math.ceil(totalResults / 5))
 
-    console.log(page)
+    // console.log(page)
     return (
         <main className="bg-gray-50 min-h-screen">
             {/* Hero Header Section */}
@@ -95,7 +95,7 @@ const WarehouseBrowser = () => {
                         </h1>
 
                         <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-                            Find warehouses with real reviews, dock times, and facility details from fellow drivers
+                            Find shipping and receiving facilities with real reviews, dock times, and more from fellow drivers
                         </p>
 
                         <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -126,22 +126,22 @@ const WarehouseBrowser = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900">
-                                {searchTerm ? `Search Results for "${searchTerm}"` : 'All Warehouses'}
+                                {searchTerm ? `Search Results for "${searchTerm}"` : 'All Facilities'}
                             </h2>
                             <p className="text-gray-600 mt-1">
-                                {isLoading ? 'Searching...' : `${warehouseList.length} / ${totalResults} warehouses found`}
+                                {isLoading ? 'Searching...' : `${warehouseList.length} / ${totalResults} facilities found`}
                             </p>
                         </div>
 
                         {/* Filter/Sort Options - placeholder for future */}
-                        <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                        {/* <div className="flex items-center space-x-4 mt-4 sm:mt-0">
                             <select className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option>Sort by relevance</option>
                                 <option>Highest rated</option>
                                 <option>Most reviews</option>
                                 <option>Fastest dock times</option>
                             </select>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Loading State */}
@@ -170,11 +170,11 @@ const WarehouseBrowser = () => {
                     {!isLoading && !errorMessage && warehouseList.length === 0 && (
                         <div className="text-center py-16">
                             <Warehouse className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-xl font-medium text-gray-900 mb-2">No warehouses found</h3>
+                            <h3 className="text-xl font-medium text-gray-900 mb-2">No facilities found</h3>
                             <p className="text-gray-600 mb-6">
                                 {searchTerm
-                                    ? `No warehouses match "${searchTerm}". Try a different search term.`
-                                    : 'No warehouses are available right now.'
+                                    ? `No facilities match "${searchTerm}". Try a different search term.`
+                                    : 'No facilities are available right now.'
                                 }
                             </p>
                             {searchTerm && (
@@ -215,7 +215,7 @@ const WarehouseBrowser = () => {
                             }}
                             disabled={isLoading}
                             className="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                                {isLoading ? "Loading…" : "Load more warehouses"}
+                                {isLoading ? "Loading…" : "Load more"}
                             </button>
                         </div>
                     )}

@@ -22,7 +22,7 @@ export const WarehouseImageGallery = ({ photos, warehouseName }) => {
         setCurrentImageIndex((prev) => (prev - 1 + displayPhotos.length) % displayPhotos.length);
     };
 
-    console.log(displayPhotos)
+    // console.log(displayPhotos)
 
     return (
         <>
