@@ -42,7 +42,7 @@ const WarehouseBrowser = () => {
 
             const data = await response.json();
 
-            console.log(data)
+            // console.log(data)
 
             if (!Array.isArray(data.warehouses)) {
                 seterrorMessage(data.Error || 'Failed to fetch warehouses');
@@ -73,11 +73,11 @@ const WarehouseBrowser = () => {
         setPage(1)
     }, [debouncedSearchTerm]);
 
-    console.log(debouncedSearchTerm)
+    // console.log(debouncedSearchTerm)
 
-    console.log("total pages ", Math.ceil(totalResults / 5))
+    // console.log("total pages ", Math.ceil(totalResults / 5))
 
-    console.log(page)
+    // console.log(page)
     return (
         <main className="bg-gray-50 min-h-screen">
             {/* Hero Header Section */}
@@ -134,14 +134,14 @@ const WarehouseBrowser = () => {
                         </div>
 
                         {/* Filter/Sort Options - placeholder for future */}
-                        <div className="flex items-center space-x-4 mt-4 sm:mt-0">
+                        {/* <div className="flex items-center space-x-4 mt-4 sm:mt-0">
                             <select className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option>Sort by relevance</option>
                                 <option>Highest rated</option>
                                 <option>Most reviews</option>
                                 <option>Fastest dock times</option>
                             </select>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Loading State */}
