@@ -163,7 +163,7 @@ export default function WarehouseDetail() {
                 </div>
             ) : !warehouse ? (
                 <div className="flex justify-center items-center min-h-screen">
-                    <p className="text-gray-700 text-lg">No warehouse found.</p>
+                    <p className="text-gray-700 text-lg">No facility found.</p>
                 </div>
             ) : (
                 <div className="bg-white">
@@ -227,7 +227,7 @@ export default function WarehouseDetail() {
                             {/* Right column - Stats & Actions */}
                             <div className="mt-8 lg:row-span-3 lg:mt-0">
                                 <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
-                                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Warehouse Stats</h2>
+                                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Facility Stats</h2>
 
                                     {/* Rating */}
                                     <div className="mb-6">
@@ -429,7 +429,9 @@ export default function WarehouseDetail() {
                                         <div>
                                             <label htmlFor="appointmentTime" className="block text-sm font-medium text-gray-700 mb-2">
                                                 <Calendar className="inline h-4 w-4 mr-1" />
-                                                Appointment Time *
+                                                Appointment Time * <span className="ml-1 text-xs font-normal text-gray-500">
+                                                    No appointment? Enter arrival time
+                                                </span>
                                             </label>
                                             <input
                                                 id="appointmentTime"

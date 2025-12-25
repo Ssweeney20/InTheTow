@@ -16,7 +16,7 @@ const HomePage = () => {
               <span className="pt-5 text-3xl block text-blue-200">Wait less. Drive more.</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-              See what's ahead at every warehouse. Real wait times, parking info, and driver notes that save you hours.
+              See what's ahead at every stop. Real reviews of freight facilities: wait times, parking, and more.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -31,7 +31,7 @@ const HomePage = () => {
                 to="/warehouses"
                 className="inline-flex items-center justify-center rounded-lg border-2 border-white px-8 py-4 text-lg font-semibold text-white hover:bg-white hover:text-blue-700 transition-colors"
               >
-                Browse warehouses
+                Browse Facilities
               </Link>
             </div>
 
@@ -79,7 +79,7 @@ const HomePage = () => {
               Why Truckers Choose InTheTow
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Get the inside scoop on every warehouse from drivers who've been there
+              Get the inside scoop on every facility from drivers who've been there
             </p>
           </div>
           
@@ -92,7 +92,7 @@ const HomePage = () => {
             <ValueCard 
               icon={MapPin}
               title="Parking & amenities"
-              description="Overnight parking, restrooms, food options, and staging advice—at a glance."
+              description="Overnight parking, restrooms, food options, and staging advice at a glance."
             />
             <ValueCard 
               icon={Shield}
@@ -130,13 +130,13 @@ const HomePage = () => {
                 <span className="text-xl font-bold text-white">InTheTow</span>
               </div>
               <p className="text-gray-400">
-                The trusted platform for truckers to share and discover warehouse experiences.
+                The trusted platform for truckers to share and discover shipping & receiving experiences
               </p>
             </div>
             <div>
               <h3 className="text-white font-semibold mb-4">For Truckers</h3>
               <ul className="space-y-2">
-                <li><Link to="/warehouses" className="hover:text-white transition-colors">Find Warehouses</Link></li>
+                <li><Link to="/warehouses" className="hover:text-white transition-colors">Find Facilities</Link></li>
                 <li><Link to="/signup" className="hover:text-white transition-colors">Write Reviews</Link></li>
               </ul>
             </div>

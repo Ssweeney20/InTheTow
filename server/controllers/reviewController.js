@@ -275,7 +275,7 @@ const createReview = async (req, res, next) => {
         }
         account.reviews.addToSet(review._id)
         await account.save()
-        console.log(account)
+        // console.log(account)
 
         // add review to warehouse
         const wh = await Warehouse.findById(warehouse)

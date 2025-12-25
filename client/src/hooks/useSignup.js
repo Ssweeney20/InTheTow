@@ -12,9 +12,6 @@ export const useSignup = () => {
         setIsLoading(true)
         setError(null)
 
-        console.log(password)
-        console.log(confirmPassword)
-
         if (password !== confirmPassword) {
             setError("Passwords do not match");
             setIsLoading(false);
