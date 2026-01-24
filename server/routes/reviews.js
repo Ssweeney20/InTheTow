@@ -17,4 +17,8 @@ router.get('/warehouse/:warehouseID', reviewController.getReviewsByWarehouse);
 
 router.post('/', upload.array('photos', 5), requireAuth, reviewController.createReview)
 
+router.post('/:id/questions', requireAuth, reviewController.createQuestion)
+
+router.patch('/questions/:questionID/answer', reviewController.answerQuestion)
+
 module.exports = router 

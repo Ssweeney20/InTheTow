@@ -1,7 +1,8 @@
 import React from 'react'
-import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User } from 'lucide-react';
+import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User, Plus, X, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ReviewImageGallery } from './ImageGallery';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_OPTIONS = {
@@ -12,6 +13,8 @@ const API_OPTIONS = {
 };
 
 const ReviewCard = (props) => {
+
+    const { user: currUser } = useAuthContext()
 
     const review = props.data;
     const photos = review.photoURLs
@@ -30,6 +33,9 @@ const ReviewCard = (props) => {
     const actualSeenMinutes = Math.round(actualSeenMs / 1000 / 60);
 
     const [user, setUser] = useState(null)
+    const [isQuestionOpen, setIsQuestionOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState("");
 
     const fetchUser = async () => {
 
@@ -57,12 +63,58 @@ const ReviewCard = (props) => {
         }
     }
 
+    async function handleSubmitQuestion(e) {
+
+        e.preventDefault();
+
+        if (currUser) {
+            setSubmitting(true);
+            setSubmitError("");
+
+            try {
+                const fd = new FormData(e.currentTarget);
+                const questionText = fd.get("questionText").toString();
+                const reviewID = review._id
+                const originalReviewAuthor = review.user
+                
+
+                if (!questionText) {
+                    setSubmitError("Question cannot be empty.");
+                    return;
+                }
+
+                const res = await fetch(`${API_BASE_URL}reviews/${review._id}/questions`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${currUser.token}`
+                    },
+                    body: JSON.stringify({
+                        questionText,
+                        reviewID,
+                        originalReviewAuthor,
+                    }),
+                });
+
+                if (!res.ok) throw new Error(`Failed to ask question (${res.status})`);
+
+                window.location.reload();
+                return
+
+            } catch (err) {
+                console.error(err);
+                setSubmitError("Could not submit question. Please try again.");
+            } finally {
+                setSubmitting(false);
+            }
+        }
+    }
+
     useEffect(() => {
         fetchUser()
     }, [userID])
 
-    const displayName = user?.displayName ?? review.userDisplayName ?? "Test";
-
+    const displayName = user?.displayName ?? review.userDisplayName ?? "Unknown";
 
     return (
         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow">
@@ -160,6 +212,105 @@ const ReviewCard = (props) => {
             {photos && photos.length > 0 && (
                 <div className="mb-4">
                     <ReviewImageGallery photos={photos} reviewId={review._id || 'review'} />
+                </div>
+            )}
+
+            {/* Add Question button */}
+            {currUser && (
+                <button
+                    type="button"
+                    onClick={() => setIsQuestionOpen(true)}
+                    className="mt-6 w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Ask Question
+                </button>
+            )}
+
+            {/* Ask Question Modal */}
+            {isQuestionOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setIsQuestionOpen(false)}
+                    />
+
+                    {/* Panel */}
+                    <div className="relative z-10 w-full max-w-lg rounded-xl bg-white shadow-2xl max-h-[90vh] flex flex-col">
+                        <div className="flex items-start justify-between p-6 border-b border-gray-200">
+                            <div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                    Ask this driver a question
+                                </h3>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    Help fellow drivers with your specific questions to drivers who've already been there
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsQuestionOpen(false)}
+                                className="ml-3 rounded-lg p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 focus:outline-none transition-colors"
+                                aria-label="Close"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmitQuestion} className="flex-1 overflow-y-auto p-6 space-y-4">
+                            {/* Text */}
+                            <div>
+                                <label htmlFor="text" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Question
+                                </label>
+                                <textarea
+                                    id="text"
+                                    name="questionText"
+                                    rows={4}
+                                    placeholder="Ask your question here!"
+                                    className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 transition-colors resize-none"
+                                />
+                            </div>
+
+                            {submitError && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center space-x-2">
+                                    <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                                    <p className="text-sm text-red-700">{submitError}</p>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsQuestionOpen(false)}
+                                    className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                    {submitting ? (
+                                        <>
+                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Submitting...
+                                        </>
+                                    ) : (
+                                        "Ask Question"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             )}
 

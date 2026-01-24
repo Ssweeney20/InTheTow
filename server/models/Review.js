@@ -26,6 +26,11 @@ const ReviewSchema = new mongoose.Schema(
             type: String,
         },
         photos: [String],
+        questions: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Question',
+            default: []
+        }],
         appointmentTime: Date,
 
         startTime: {

@@ -1,6 +1,8 @@
 const Review = require('../models/Review')
 const Warehouse = require('../models/Warehouse')
 const User = require('../models/User')
+const Question = require('../models/Question')
+
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { S3Client, PutObjectCommand, GetObjectCommand, S3TablesBucketType } = require("@aws-sdk/client-s3")
 const dontenv = require("dotenv")
@@ -160,6 +162,7 @@ const getReviewsByWarehouse = async (req, res, next) => {
             return res.status(404).json({ error: 'Warehouse not found' });
         }
         const reviews = await Review.find({ warehouse: warehouseID }).sort({ createdAt: -1 })
+            .populate('questions')
             .skip(page * limit)
             .limit(limit)
             .lean()
@@ -355,10 +358,57 @@ const createReview = async (req, res, next) => {
     }
 }
 
+const createQuestion = async(req, res, next) => {
+    try{
+        const { reviewID,
+            questionText, originalReviewAuthor
+        } = req.body
+        const askedBy = req.user;
+        
+        const review = await Review.findById(reviewID)
+
+        // do input validation here
+        if (!review) return res.status(404).json({ message: "Review not found" });
+
+        // create question
+        const question = await Question.create({
+            reviewID, askedBy, questionText, originalReviewAuthor
+        })
+
+        // save question to review
+        review.questions.addToSet(question._id)
+        await review.save()
+
+        res.status(201).json(question)
+    }
+    catch(err){
+        console.error('createQuestion error: ', err);
+        next(err)
+    }
+}
+
+const answerQuestion = async (req, res, next) => {
+    try{
+        const {answerText, questionID} = req.body
+        
+        const question = await Question.findById(questionID)
+        question.answerText = answerText
+        await question.save()
+
+        res.status(201).json(question)
+    }
+    catch(err){
+        console.error('answerQuestion error: ', err);
+        next(err)
+    }
+}
+
 module.exports = {
     getAllReviews,
     createReview,
     getReviewByID,
     getReviewsByWarehouse,
-    getReviewsByUser
+    getReviewsByUser,
+    createQuestion,
+    answerQuestion
 }
