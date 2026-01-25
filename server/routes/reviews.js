@@ -19,6 +19,6 @@ router.post('/', upload.array('photos', 5), requireAuth, reviewController.create
 
 router.post('/:id/questions', requireAuth, reviewController.createQuestion)
 
-router.patch('/questions/:questionID/answer', reviewController.answerQuestion)
+router.patch('/answer/:questionID/', reviewController.answerQuestion)
 
 module.exports = router 

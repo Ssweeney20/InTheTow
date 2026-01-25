@@ -52,7 +52,7 @@ const loginUser = async (req, res, next) => {
         // create JWT
         const token = createToken(user._id)
 
-        res.status(200).json({ email, token })
+        res.status(200).json({ email, token, userID: user._id, displayName : user.displayName })
 
     } catch (error) {
         res.status(400).json({ error: error.message })

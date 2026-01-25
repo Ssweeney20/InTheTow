@@ -123,7 +123,7 @@ const getReviewsByUser = async (req, res, next) => {
             .limit(limit)
             .lean()
 
-        const total = await Review.countDocuments({user: userID });
+        const total = await Review.countDocuments({ user: userID });
 
         for (let review of reviews) {
             if (review.photos) {
@@ -162,12 +162,22 @@ const getReviewsByWarehouse = async (req, res, next) => {
             return res.status(404).json({ error: 'Warehouse not found' });
         }
         const reviews = await Review.find({ warehouse: warehouseID }).sort({ createdAt: -1 })
-            .populate('questions')
+            .populate({
+                path: 'questions',
+                populate: [{
+                    path: 'askedBy',
+                    select: 'displayName'
+                },
+                {
+                    path: 'originalReviewAuthor',
+                    select: 'displayName',
+                }]
+            })
             .skip(page * limit)
             .limit(limit)
             .lean()
-        
-        const total = await Review.countDocuments({warehouse: warehouseID });
+
+        const total = await Review.countDocuments({ warehouse: warehouseID });
 
         for (let review of reviews) {
             if (review.photos) {
@@ -358,13 +368,17 @@ const createReview = async (req, res, next) => {
     }
 }
 
-const createQuestion = async(req, res, next) => {
-    try{
+const createQuestion = async (req, res, next) => {
+    try {
         const { reviewID,
             questionText, originalReviewAuthor
         } = req.body
         const askedBy = req.user;
-        
+
+        if (askedBy === originalReviewAuthor) {
+            return res.status(404).json({ message: "Cannot ask question on your own review" })
+        }
+
         const review = await Review.findById(reviewID)
 
         // do input validation here
@@ -381,23 +395,24 @@ const createQuestion = async(req, res, next) => {
 
         res.status(201).json(question)
     }
-    catch(err){
+    catch (err) {
         console.error('createQuestion error: ', err);
         next(err)
     }
 }
 
 const answerQuestion = async (req, res, next) => {
-    try{
-        const {answerText, questionID} = req.body
-        
+    try {
+        console.log('hello')
+        const { answerText, questionID } = req.body
+
         const question = await Question.findById(questionID)
         question.answerText = answerText
         await question.save()
 
         res.status(201).json(question)
     }
-    catch(err){
+    catch (err) {
         console.error('answerQuestion error: ', err);
         next(err)
     }

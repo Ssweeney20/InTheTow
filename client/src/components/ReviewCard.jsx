@@ -1,7 +1,8 @@
 import React from 'react'
-import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User, Plus, X, AlertCircle } from 'lucide-react';
+import { Star, Clock, Shield, CheckCircle, ThumbsUp, ThumbsDown, User, Plus, X, AlertCircle, MessageCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { ReviewImageGallery } from './ImageGallery';
+import ReviewQuestionsSection from './ReviewQuestionsSection';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -17,6 +18,7 @@ const ReviewCard = (props) => {
     const { user: currUser } = useAuthContext()
 
     const review = props.data;
+    const questions = review.questions
     const photos = review.photoURLs
     const userID = review.user
 
@@ -76,7 +78,7 @@ const ReviewCard = (props) => {
                 const questionText = fd.get("questionText").toString();
                 const reviewID = review._id
                 const originalReviewAuthor = review.user
-                
+
 
                 if (!questionText) {
                     setSubmitError("Question cannot be empty.");
@@ -215,14 +217,24 @@ const ReviewCard = (props) => {
                 </div>
             )}
 
-            {/* Add Question button */}
-            {currUser && (
+            {/* Questions Section  */}
+            {review.questions && review.questions.length > 0 && (
+                <ReviewQuestionsSection
+                    questions={review.questions}
+                    reviewId={review._id}
+                    reviewAuthorId={userID}
+                    currentUserId={currUser?.userID}
+                />
+            )}
+
+            {/* Ask Question Button  */}
+
+            {currUser && currUser.userID != userID && (
                 <button
-                    type="button"
-                    onClick={() => setIsQuestionOpen(true)}
-                    className="mt-6 w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                    onClick={() => setIsQuestionOpen(!isQuestionOpen)}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <MessageCircle className="w-4 h-4" />
                     Ask Question
                 </button>
             )}
