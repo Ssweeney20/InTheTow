@@ -47,6 +47,8 @@ const MyReviewPage = () => {
     }, [page])
 
 
+    console.log(reviews)
+
     return (
         <>
             <div className="min-h-screen bg-white">
