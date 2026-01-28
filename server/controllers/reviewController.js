@@ -119,6 +119,17 @@ const getReviewsByUser = async (req, res, next) => {
         }
 
         const reviews = await Review.find({ user: userID }).sort({ createdAt: -1 })
+            .populate({
+                path: 'questions',
+                populate: [{
+                    path: 'askedBy',
+                    select: 'displayName'
+                },
+                {
+                    path: 'originalReviewAuthor',
+                    select: 'displayName',
+                }]
+            })
             .skip(page * limit)
             .limit(limit)
             .lean()

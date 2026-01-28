@@ -3,7 +3,7 @@ import { MessageCircle } from 'lucide-react';
 import QuestionAnswer from './QuestionAnswer';
 
 const ReviewQuestionsSection = ({ questions = [], reviewId, reviewAuthorId, currentUserId }) => {
-    // verify if questions have been answered or not, creating arrays
+    // seperate questions into answered and unanswered
     const answeredQuestions = questions.filter(q => q.answerText && q.answerText.trim() !== '');
     const unansweredQuestions = questions.filter(q => !q.answerText || q.answerText.trim() === '');
 
@@ -44,7 +44,7 @@ const ReviewQuestionsSection = ({ questions = [], reviewId, reviewAuthorId, curr
                     </div>
                 )}
 
-                {/* Show answered questions */}
+                {/* answered questions */}
                 {answeredQuestions.length > 0 && (
                     <div>
                         {unansweredQuestions.length > 0 && (

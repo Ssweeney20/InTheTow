@@ -4,7 +4,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const QuestionAnswer = ({ data, canAnswer = false}) => {
+const QuestionAnswer = ({ data, canAnswer = false }) => {
 
     const { user: currUser } = useAuthContext()
     const question = data;
@@ -39,7 +39,7 @@ const QuestionAnswer = ({ data, canAnswer = false}) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ answerText, questionID : question._id })
+                body: JSON.stringify({ answerText, questionID: question._id })
             });
 
             if (!response.ok) throw new Error('Failed to submit answer');
@@ -48,7 +48,7 @@ const QuestionAnswer = ({ data, canAnswer = false}) => {
             setAnswerText('');
 
             window.location.reload();
-    
+
         } catch (err) {
             console.error(err);
             setSubmitError('Could not submit answer. Please try again.');
@@ -58,6 +58,7 @@ const QuestionAnswer = ({ data, canAnswer = false}) => {
     };
 
     const hasAnswer = question.answerText && question.answerText.trim() !== '';
+
 
     return (
         <div className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
@@ -103,7 +104,7 @@ const QuestionAnswer = ({ data, canAnswer = false}) => {
             </div>
 
             {/* Answer Section */}
-            {currUser &&
+            {
                 (hasAnswer ? (
                     <div className="mt-4 ml-11 pl-4 border-l-2 border-blue-200 bg-blue-50 rounded-r-lg p-3">
                         <div className="flex items-center space-x-2 mb-2">
@@ -121,7 +122,7 @@ const QuestionAnswer = ({ data, canAnswer = false}) => {
                             {question.answerText}
                         </p>
                     </div>
-                ) : (
+                ) : currUser && (
                     <div className="mt-4 ml-11">
                         {canAnswer && !isAnswering ? (
                             <button
