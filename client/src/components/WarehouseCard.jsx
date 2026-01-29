@@ -1,5 +1,5 @@
 import React from 'react'
-import { Star, Clock, MapPin, CheckCircle, Shield } from 'lucide-react'
+import { Star, Clock, MapPin, CheckCircle } from 'lucide-react'
 
 const WarehouseCard = ({ warehouse }) => {
     const {
@@ -18,81 +18,100 @@ const WarehouseCard = ({ warehouse }) => {
         numRatings,
         googlePlaceId,
         photoURLs,
+        inTheTowScore = 50,
     } = warehouse;
 
     const topPhoto = photoURLs?.[0]
 
+    // color coding
+    const getScoreColor = (score) => {
+        if (score >= 85) return 'from-yellow-500 to-yellow-600';
+        if (score >= 60) return 'from-green-500 to-green-600';
+        if (score >= 50) return 'from-blue-500 to-blue-600';
+        if (score >= 40) return 'from-orange-500 to-orange-600';
+        return 'from-red-500 to-red-600';
+    };
+
+    // score ranking
+    const getScoreRanking = (score) => {
+        if (score >= 85) return 'Excellent';
+        if (score >= 60) return 'Good';
+        if (score >= 50) return 'Average';
+        if (score >= 40) return 'Below Average';
+        return 'Poor';
+    }
+    
     return (
         <div className='group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1'>
             {/* Image Container */}
             <div className="relative overflow-hidden bg-gray-100">
-                <img
-                    src={topPhoto ? topPhoto : "placeholder-image.jpg"}
+                <img 
+                    src={topPhoto ? topPhoto : "placeholder-image.jpg"} 
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
                     alt={`${name} warehouse`}
                     onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
                 />
+                
+                {/* InTheTow Score - Top Right */}
+                <div className={`absolute top-3 right-3 bg-gradient-to-br ${getScoreColor(Math.round(inTheTowScore))} text-white rounded-lg px-1 py-1 shadow-lg`}>
+                    <div className="text-xs font-medium opacity-70 text-center">Overall Score</div>
+                    <div className="text-3xl font-bold leading-none text-center">{Math.round(inTheTowScore)}</div>
+                    <div className="text-xs font-medium opacity-80 text-center">{getScoreRanking(Math.round(inTheTowScore))}</div>
+                </div>
 
-                {/* Rating Badge */}
-                {reviews.length > 0 && numRatings > 0 && avgRating && (
-                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
+                {/* Star Rating - Top Right
+                {avgRating && (
+                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2.5 py-1.5 flex items-center space-x-1 shadow-md">
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
                         <span className="text-sm font-semibold text-gray-900">
                             {avgRating.toFixed(1)}
                         </span>
                     </div>
-                )}
-
-                {/* Safety Score Badge */}
-                {reviews.length > 0 && numRatings > 0 && safetyScore && (
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
-                        <Shield className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-semibold text-gray-900">
-                            {safetyScore.toFixed(1)}
-                        </span>
-                    </div>
-                )}
+                )} */}
             </div>
 
             {/* Content */}
             <div className='p-5'>
                 {/* Header */}
-                <div className="mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                <div className="mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-1">
                         {name}
                     </h3>
-                    <div className="flex items-center text-gray-600 mt-1">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <p className="text-sm">{streetAddress}, {city}, {state}</p>
+                    <div className="flex items-center text-gray-600">
+                        <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                        <p className="text-sm line-clamp-1">{city}, {state}</p>
                     </div>
                 </div>
 
+
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-100">
                         <Clock className="h-5 w-5 text-blue-600 mx-auto mb-1" />
                         <div className="text-xs text-gray-600 mb-1">Avg Dock Time</div>
                         <div className="text-sm font-semibold text-gray-900">
                             {avgTimeAtDock ? `${Math.round(avgTimeAtDock)} min` : 'N/A'}
                         </div>
                     </div>
-
-                    <div className="bg-green-50 rounded-lg p-3 text-center">
+                    
+                    <div className="bg-green-50 rounded-lg p-3 text-center border border-green-100">
                         <CheckCircle className="h-5 w-5 text-green-600 mx-auto mb-1" />
                         <div className="text-xs text-gray-600 mb-1">On-Time Rate</div>
                         <div className="text-sm font-semibold text-gray-900">
-                            {reviews.length  ? `${Math.round(appointmentsOnTimePercentage)}%` : 'N/A'}
+                            {appointmentsOnTimePercentage ? `${Math.round(appointmentsOnTimePercentage)}%` : 'N/A'}
                         </div>
                     </div>
                 </div>
 
-                {/* Reviews Count */}
+                {/* Footer */}
                 <div className="flex items-center justify-between text-sm text-gray-500">
                     <span>{numRatings ? `${numRatings} reviews` : 'No reviews yet'}</span>
                     <span className="text-blue-600 font-medium group-hover:text-blue-700">
                         View Details →
                     </span>
                 </div>
+
+            
             </div>
         </div>
     )

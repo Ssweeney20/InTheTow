@@ -24,6 +24,60 @@ const s3 = new S3Client({
     region: bucketRegion
 })
 
+
+const normalizeValue = (min = null, max = null, value, withGrowth = false, midPoint = null, slope = null) => {
+    if (withGrowth && midPoint !== null && slope !== null){
+        return 1 / (1 + (Math.pow(Math.E, slope * (value - midPoint))))
+    }
+    else if (min !== null && max !== null){
+        return ((value - min) / (max - min))
+    }
+}
+
+// prior - what score should something have when I don’t trust the data yet?
+const calculateConfidence = (prior, confidence, value) => {
+    return prior + confidence * (value - prior)
+}
+
+const calculateInTheTowScore = (avgRating, numRatings, recentFiveRatings = [],
+                                avgTimeAtDock, appointmentsOnTimePercentage, 
+                                overnightParking, safetyScore, numSafetyReports, numTimeReports) => 
+    {
+    // normalize values so all are on same scale
+    avgRating = normalizeValue(1, 5, avgRating)
+    avgTimeAtDock = normalizeValue(undefined, undefined, avgTimeAtDock, true, 240, 0.012)
+    safetyScore = normalizeValue(1, 5, safetyScore)
+    // calculate confidences
+    const ratingConfidence = normalizeValue(undefined, undefined, numRatings, true, 3, -1.1)
+    const safetyConfidence = normalizeValue(undefined, undefined, numSafetyReports, true, 3, -1.1)
+    const dockTimeConfidence = normalizeValue(undefined, undefined, numTimeReports, true, 3, -1.1)
+    const totalScoreConfidence = ratingConfidence
+
+    // weigh values with confidences
+    avgRating = calculateConfidence(0.5, ratingConfidence, avgRating)
+    avgTimeAtDock = calculateConfidence(0.5, dockTimeConfidence, avgTimeAtDock)
+    safetyScore = calculateConfidence(0.5, safetyConfidence, safetyScore)
+
+    // get average rating to 5 most recent reviews (this score will be weighed more highly then average rating)
+    let sum = 0
+    for (let i = 0; i < recentFiveRatings.length; i++){
+        sum += recentFiveRatings[i]
+    }
+    let recentAverageRating = sum / recentFiveRatings.length
+    recentAverageRating = normalizeValue(1, 5, recentAverageRating)
+
+    // calculate weighted average
+    const totalRatingWeight = 0.15
+    const recentRatingWeight = 0.4
+    const timeWeight = 0.4
+    const safeWeight = 0.05
+
+    let weightedAverage = (avgRating * totalRatingWeight) + (avgTimeAtDock * timeWeight) + (safetyScore * safeWeight) + (recentAverageRating * recentRatingWeight)
+
+    // factor in total confidence
+    return calculateConfidence(0.5, totalScoreConfidence, weightedAverage) * 100
+}
+
 const randomImageName = (bytes = 32) => {
     return crypto.randomBytes(bytes).toString('hex')
 }
@@ -369,6 +423,22 @@ const createReview = async (req, res, next) => {
         wh.numTimeReports = newTimeReports
         wh.avgTimeAtDock = newAvgTime
 
+        // recalculate in the towScore
+        await wh.populate({
+            path: "reviews",
+            options : { sort : { createdAt: -1 } }
+        })
+
+        const recentRatings = []
+        for (let i = 0; i < wh.reviews.length; i++){
+            recentRatings.push(wh.reviews[i].rating)
+        }
+
+        wh.inTheTowScore = calculateInTheTowScore(wh.avgRating, wh.numRatings, recentRatings, 
+            wh.avgTimeAtDock, wh.appointmentsOnTimePercentage, wh.overnightParking,
+            wh.safetyScore, wh.numSafetyReports, wh.numTimeReports
+        )
+
         await wh.save()
 
         res.status(201).json(review)
@@ -414,7 +484,6 @@ const createQuestion = async (req, res, next) => {
 
 const answerQuestion = async (req, res, next) => {
     try {
-        console.log('hello')
         const { answerText, questionID } = req.body
 
         const question = await Question.findById(questionID)
@@ -436,5 +505,6 @@ module.exports = {
     getReviewsByWarehouse,
     getReviewsByUser,
     createQuestion,
-    answerQuestion
+    answerQuestion,
+    calculateInTheTowScore
 }

@@ -77,6 +77,11 @@ const WarehouseSchema = new mongoose.Schema(
             max: 5,
             default: 0
         },
+        inTheTowScore:{
+            type: Number, 
+            min: 1,
+            max: 100,
+        },
         numSafetyReports:{
             type: Number, 
             default: 0
