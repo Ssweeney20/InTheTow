@@ -2,6 +2,7 @@ const Warehouse = require('../models/Warehouse');
 
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3")
+const { calculateInTheTowScore } = require('./reviewController')
 const dontenv = require("dotenv")
 
 dontenv.config()
@@ -78,7 +79,8 @@ const getAllWarehouses = async (req, res, next) => {
 
 const getWarehouseByID = async (req, res, next) => {
     try {
-        const warehouse = await Warehouse.findById(req.params.id).lean()
+        const warehouse = await Warehouse.findById(req.params.id)
+            .lean()
         if (!warehouse) {
             return res.status(404).json({ error: 'ID Not found' })
         }
