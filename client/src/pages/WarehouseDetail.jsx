@@ -235,8 +235,8 @@ export default function WarehouseDetail() {
                                         <div className={`mb-6 p-4 rounded-lg ${
                                             inTheTowScore >= 85 ? 'bg-gradient-to-br from-yellow-500 to-yellow-600' :
                                             inTheTowScore >= 60 ? 'bg-gradient-to-br from-green-500 to-green-600' :
-                                                inTheTowScore >= 50 ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
-                                                        inTheTowScore >= 40 ? 'bg-gradient-to-br from-orange-500 to-orange-600' :
+                                                inTheTowScore >= 45 ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
+                                                        inTheTowScore >= 38 ? 'bg-gradient-to-br from-orange-500 to-orange-600' :
                                                             'bg-gradient-to-br from-red-500 to-red-600'
                                             }`}>
                                             <div className="flex items-center justify-between">
@@ -256,8 +256,8 @@ export default function WarehouseDetail() {
                                                 <div className="text-xs text-white/90 font-medium">
                                                     {inTheTowScore >= 85 ? 'Excellent' :
                                                         inTheTowScore >= 60 ? 'Good' :
-                                                            inTheTowScore >= 50 ? 'Average' :
-                                                                inTheTowScore >= 40 ? 'Below average' :
+                                                            inTheTowScore >= 45 ? 'Average' :
+                                                                inTheTowScore >= 38 ? 'Below average' :
                                                                     'Poor'}
                                                 </div>
                                             </div>

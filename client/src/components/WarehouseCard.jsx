@@ -27,8 +27,8 @@ const WarehouseCard = ({ warehouse }) => {
     const getScoreColor = (score) => {
         if (score >= 85) return 'from-yellow-500 to-yellow-600';
         if (score >= 60) return 'from-green-500 to-green-600';
-        if (score >= 50) return 'from-blue-500 to-blue-600';
-        if (score >= 40) return 'from-orange-500 to-orange-600';
+        if (score >= 45) return 'from-blue-500 to-blue-600';
+        if (score >= 38) return 'from-orange-500 to-orange-600';
         return 'from-red-500 to-red-600';
     };
 
@@ -36,8 +36,8 @@ const WarehouseCard = ({ warehouse }) => {
     const getScoreRanking = (score) => {
         if (score >= 85) return 'Excellent';
         if (score >= 60) return 'Good';
-        if (score >= 50) return 'Average';
-        if (score >= 40) return 'Below Average';
+        if (score >= 45) return 'Average';
+        if (score >= 38) return 'Below Average';
         return 'Poor';
     }
     
@@ -51,38 +51,29 @@ const WarehouseCard = ({ warehouse }) => {
                     alt={`${name} warehouse`}
                     onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
                 />
-                
-                {/* InTheTow Score - Top Right */}
-                <div className={`absolute top-3 right-3 bg-gradient-to-br ${getScoreColor(Math.round(inTheTowScore))} text-white rounded-lg px-1 py-1 shadow-lg`}>
-                    <div className="text-xs font-medium opacity-70 text-center">Overall Score</div>
-                    <div className="text-3xl font-bold leading-none text-center">{Math.round(inTheTowScore)}</div>
-                    <div className="text-xs font-medium opacity-80 text-center">{getScoreRanking(Math.round(inTheTowScore))}</div>
-                </div>
-
-                {/* Star Rating - Top Right
-                {avgRating && (
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2.5 py-1.5 flex items-center space-x-1 shadow-md">
-                        <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-semibold text-gray-900">
-                            {avgRating.toFixed(1)}
-                        </span>
-                    </div>
-                )} */}
             </div>
 
             {/* Content */}
             <div className='p-5'>
-                {/* Header */}
-                <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-1">
-                        {name}
-                    </h3>
-                    <div className="flex items-center text-gray-600">
-                        <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
-                        <p className="text-sm line-clamp-1">{city}, {state}</p>
+                {/* Header with Score Card */}
+                <div className="mb-4 flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 mb-1">
+                            {name}
+                        </h3>
+                        <div className="flex items-center text-gray-600">
+                            <MapPin className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <p className="text-sm line-clamp-1">{city}, {state}</p>
+                        </div>
+                    </div>
+                    
+                    {/* InTheTow Score */}
+                    <div className={`flex-shrink-0 bg-gradient-to-br ${getScoreColor(Math.round(inTheTowScore))} text-white rounded-lg px-3 py-1 shadow-md`}>
+                        <div className="text-xs font-medium opacity-70 text-center">Overall Score</div>
+                        <div className="text-3xl font-bold leading-none text-center">{Math.round(inTheTowScore)}</div>
+                        <div className="text-xs font-medium opacity-80 text-center">{getScoreRanking(Math.round(inTheTowScore))}</div>
                     </div>
                 </div>
-
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 gap-3 mb-4">
@@ -110,8 +101,6 @@ const WarehouseCard = ({ warehouse }) => {
                         View Details →
                     </span>
                 </div>
-
-            
             </div>
         </div>
     )
