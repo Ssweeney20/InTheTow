@@ -9,6 +9,7 @@ const corsOptions = {
   ]
 };
 const mongoose = require('mongoose');
+const redisClient = require('./config/redis')
 const PORT = process.env.PORT || 8080;
 
 const startServer = async () => {
@@ -16,6 +17,8 @@ const startServer = async () => {
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("DB Connected!");
 
+    await redisClient.connect();
+    
     const app = express();
 
     app.use(cors(corsOptions));
@@ -29,7 +32,7 @@ const startServer = async () => {
       console.log(`Server started on port ${PORT}`);
     });
   } catch (err) {
-    console.log("Mongo connection error:", err);
+    console.log("DB connection error:", err);
     process.exit(1);
   }
 };

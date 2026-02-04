@@ -4,6 +4,7 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3")
 const { calculateInTheTowScore } = require('./reviewController')
 const dontenv = require("dotenv")
+const redisClient = require("../config/redis")
 
 dontenv.config()
 
@@ -45,7 +46,7 @@ const getAllWarehouses = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) - 1 || 0
         const limit = parseInt(req.query.limit) || 5
-
+        
         const warehouses = await Warehouse.find()
             .skip(page * limit)
             .limit(limit)
@@ -78,6 +79,7 @@ const getAllWarehouses = async (req, res, next) => {
 }
 
 const getWarehouseByID = async (req, res, next) => {
+
     try {
         const warehouse = await Warehouse.findById(req.params.id)
             .lean()
@@ -91,6 +93,9 @@ const getWarehouseByID = async (req, res, next) => {
         else {
             warehouse.photoURLs = []
         }
+
+        // update redis to reflect that warehouse has been viewed
+        redisRes = await redisClient.zIncrBy('activity_score', 1, req.params.id)
 
         res.json(warehouse)
     }

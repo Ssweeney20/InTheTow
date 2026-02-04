@@ -8,6 +8,7 @@ const { S3Client, PutObjectCommand, GetObjectCommand, S3TablesBucketType } = req
 const dontenv = require("dotenv")
 const crypto = require("crypto")
 const sharp = require("sharp")
+const redisClient = require("../config/redis")
 
 dontenv.config()
 
@@ -441,6 +442,10 @@ const createReview = async (req, res, next) => {
 
         await wh.save()
 
+        // update redis activity score
+
+        const redisRes = await redisClient.ZINCRBY('activity_score', 5, warehouse)
+
         res.status(201).json(review)
     }
     catch (err) {
@@ -473,6 +478,7 @@ const createQuestion = async (req, res, next) => {
         // save question to review
         review.questions.addToSet(question._id)
         await review.save()
+
 
         res.status(201).json(question)
     }
