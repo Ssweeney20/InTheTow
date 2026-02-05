@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { Clock, CheckCircle, Star, Truck, Users, MapPin, TrendingUp, Search, Shield } from 'lucide-react'
 import { useAuthContext } from "../hooks/useAuthContext";
+import ActiveFacilities from '../components/ActiveFacilities'
 
 const HomePage = () => {
   const { user } = useAuthContext()
@@ -42,34 +43,8 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      
-      {/* <section className="py-16 bg-white border-b">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <Truck className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">15,000+</div>
-              <div className="text-gray-600">Active Truckers</div>
-            </div>
-            <div>
-              <MapPin className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">8,500+</div>
-              <div className="text-gray-600">Warehouses</div>
-            </div>
-            <div>
-              <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">45,000+</div>
-              <div className="text-gray-600">Reviews</div>
-            </div>
-            <div>
-              <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">125,000+</div>
-              <div className="text-gray-600">Hours Saved</div>
-            </div>
-          </div>
-        </div>
-      </section> */}
+      {/* Active Facility Section */}
+      <ActiveFacilities/>
 
       {/* Value Props Section */}
       <section className="py-20 bg-gray-50">
