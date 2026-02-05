@@ -248,6 +248,39 @@ const searchWarehouses = async (req, res, next) => {
     }
 }
 
+const getActiveWarehouses = async (req, res, next) => {
+
+    try {
+
+        response = []
+        facilityIDs = await redisClient.zRange('activity_score', 0, 4, {REV : true})
+        
+        for (const id of facilityIDs){
+            wh = await Warehouse.findById(id)
+                .lean()
+            if(!wh){
+                throw new Error('failed to find facility')
+            }
+            response.push(wh)
+        }
+
+
+        for (let warehouse of response) {
+            if (warehouse.photos) {
+                warehouse.photoURLs = await generateImageURL(warehouse.photos)
+            }
+            else {
+                warehouse.photoURLs = []
+            }
+        }
+
+        res.json(response)
+    }
+    catch(err){
+        next(err)
+    }
+} 
+
 
 
 
@@ -258,5 +291,6 @@ module.exports = {
     createWarehouse,
     deleteWarehouseByID,
     updateWarehouseByID,
-    searchWarehouses
+    searchWarehouses,
+    getActiveWarehouses,
 }

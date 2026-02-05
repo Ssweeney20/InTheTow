@@ -1,7 +1,7 @@
 import React from 'react'
 import { Star, Clock, MapPin, CheckCircle } from 'lucide-react'
 
-const WarehouseCard = ({ warehouse }) => {
+const WarehouseCard = ({ warehouse, activeFacilitySection = false }) => {
     const {
         _id,
         name,
@@ -40,13 +40,13 @@ const WarehouseCard = ({ warehouse }) => {
         if (score >= 38) return 'Below Average';
         return 'Poor';
     }
-    
+
     return (
         <div className='group bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1'>
             {/* Image Container */}
             <div className="relative overflow-hidden bg-gray-100">
-                <img 
-                    src={topPhoto ? topPhoto : "placeholder-image.jpg"} 
+                <img
+                    src={topPhoto ? topPhoto : "placeholder-image.jpg"}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
                     alt={`${name} warehouse`}
                     onError={(e) => (e.currentTarget.src = "/placeholder-image.jpg")}
@@ -66,16 +66,20 @@ const WarehouseCard = ({ warehouse }) => {
                             <p className="text-sm line-clamp-1">{city}, {state}</p>
                         </div>
                     </div>
-                    
+
                     {/* InTheTow Score */}
-                    <div className={`flex-shrink-0 bg-gradient-to-br ${getScoreColor(Math.round(inTheTowScore))} text-white rounded-lg px-3 py-1 shadow-md`}>
-                        <div className="text-xs font-medium opacity-70 text-center">Overall Score</div>
-                        <div className="text-3xl font-bold leading-none text-center">{Math.round(inTheTowScore)}</div>
-                        <div className="text-xs font-medium opacity-80 text-center">{getScoreRanking(Math.round(inTheTowScore))}</div>
-                    </div>
+                    {!activeFacilitySection &&
+                        <div className={`flex-shrink-0 bg-gradient-to-br ${getScoreColor(Math.round(inTheTowScore))} text-white rounded-lg px-3 py-1 shadow-md`}>
+                            <div className="text-xs font-medium opacity-70 text-center">Overall Score</div>
+                            <div className="text-3xl font-bold leading-none text-center">{Math.round(inTheTowScore)}</div>
+                            <div className="text-xs font-medium opacity-80 text-center">{getScoreRanking(Math.round(inTheTowScore))}</div>
+                        </div>
+                    }
+
                 </div>
 
                 {/* Stats Grid */}
+
                 <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-100">
                         <Clock className="h-5 w-5 text-blue-600 mx-auto mb-1" />
@@ -84,7 +88,7 @@ const WarehouseCard = ({ warehouse }) => {
                             {avgTimeAtDock ? `${Math.round(avgTimeAtDock)} min` : 'N/A'}
                         </div>
                     </div>
-                    
+
                     <div className="bg-green-50 rounded-lg p-3 text-center border border-green-100">
                         <CheckCircle className="h-5 w-5 text-green-600 mx-auto mb-1" />
                         <div className="text-xs text-gray-600 mb-1">On-Time Rate</div>
@@ -93,6 +97,7 @@ const WarehouseCard = ({ warehouse }) => {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Footer */}
                 <div className="flex items-center justify-between text-sm text-gray-500">
